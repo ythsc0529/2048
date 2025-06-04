@@ -5,48 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2048時間</title>
     <style>
+        /* 整體頁面樣式設定 */
         body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #faf8ef;
+            font-family: Arial, sans-serif; /* 設定字體 */
+            display: flex; /* 使用 Flexbox 佈局 */
+            flex-direction: column; /* 垂直排列子元素 */
+            justify-content: center; /* 垂直居中對齊 */
+            align-items: center; /* 水平居中對齊 */
+            height: 100vh; /* 佔滿整個視窗高度 */
+            margin: 0; /* 移除預設外邊距 */
+            background-color: #faf8ef; /* 設定背景顏色 */
         }
+        /* 分數板樣式 */
         #score-board {
-            margin-bottom: 20px;
-            font-size: 24px;
-            font-weight: bold;
-            color: #776e65;
+            margin-bottom: 20px; /* 下方間距 */
+            font-size: 24px; /* 字體大小 */
+            font-weight: bold; /* 字體粗細 */
+            color: #776e65; /* 字體顏色 */
         }
+        /* 遊戲板樣式 */
         #game-board {
-            display: grid;
-            grid-gap: 10px;
-            background-color: #bbada0;
-            padding: 10px;
-            border-radius: 10px;
-            position: relative;
-            justify-content: center;
+            display: grid; /* 使用 Grid 佈局 */
+            grid-gap: 10px; /* 網格間距 */
+            background-color: #bbada0; /* 背景顏色 */
+            padding: 10px; /* 內邊距 */
+            border-radius: 10px; /* 圓角 */
+            position: relative; /* 相對定位，用於遊戲結束畫面的絕對定位 */
+            justify-content: center; /* 水平居中 */
         }
+        /* 方塊(tile)的通用樣式 */
         .tile {
-            width: 100px;
-            height: 100px;
-            background-color: #cdc1b4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 36px;
-            font-weight: bold;
-            color: #776e65;
-            border-radius: 5px;
-            transition: transform 0.2s, background-color 0.2s;
+            width: 100px; /* 寬度 */
+            height: 100px; /* 高度 */
+            background-color: #cdc1b4; /* 預設背景顏色 */
+            display: flex; /* 使用 Flexbox 居中內容 */
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直居中 */
+            font-size: 36px; /* 字體大小 */
+            font-weight: bold; /* 字體粗細 */
+            color: #776e65; /* 字體顏色 */
+            border-radius: 5px; /* 圓角 */
+            transition: transform 0.2s, background-color 0.2s; /* 過渡效果，用於動畫 */
         }
+        /* 不同數值的方塊背景顏色和字體顏色 */
         .tile[data-value="2"] { background-color: #eee4da; }
         .tile[data-value="4"] { background-color: #ede0c8; }
         .tile[data-value="8"] { background-color: #f2b179; color: #f9f6f2; }
-        .tile[data-value="16"] { background-color: #f59563; color: #f9f6f2; }
+        .tile[data-value="16"] { background-color: #f59563; color: #f9f9f2; }
         .tile[data-value="32"] { background-color: #f67c5f; color: #f9f6f2; }
         .tile[data-value="64"] { background-color: #f65e3b; color: #f9f6f2; }
         .tile[data-value="128"] { background-color: #edcf72; color: #f9f6f2; }
@@ -54,47 +59,89 @@
         .tile[data-value="512"] { background-color: #edc850; color: #f9f6f2; }
         .tile[data-value="1024"] { background-color: #edc53f; color: #f9f6f2; }
         .tile[data-value="2048"] { background-color: #edc22e; color: #f9f6f2; }
+        /* 合併動畫效果 */
         .tile.merge {
-            animation: merge 0.3s ease-in-out;
+            animation: merge 0.3s ease-in-out; /* 應用 merge 動畫 */
         }
+        /* merge 動畫關鍵影格 */
         @keyframes merge {
             0% {
-                transform: scale(1.2);
+                transform: scale(1.2); /* 初始放大 */
             }
             50% {
-                transform: scale(1.3);
+                transform: scale(1.3); /* 中間更大 */
             }
             100% {
-                transform: scale(1);
+                transform: scale(1); /* 恢復原始大小 */
             }
         }
+        /* 遊戲結束/勝利畫面樣式 */
         #game-over {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
+            display: none; /* 預設隱藏 */
+            position: absolute; /* 絕對定位 */
+            top: 50%; /* 垂直居中 */
+            left: 50%; /* 水平居中 */
+            transform: translate(-50%, -50%); /* 精確居中 */
+            background-color: rgba(0, 0, 0, 0.7); /* 半透明黑色背景 */
+            color: #fff; /* 白色字體 */
+            padding: 20px; /* 內邊距 */
+            border-radius: 10px; /* 圓角 */
+            text-align: center; /* 文字居中 */
+            z-index: 10; /* 確保在其他元素之上 */
         }
+        /* 遊戲結束/勝利畫面按鈕樣式 */
         #game-over button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            font-size: 18px;
-            border: none;
-            background-color: #f67c5f;
-            color: #fff;
-            border-radius: 5px;
-            cursor: pointer;
+            margin-top: 10px; /* 上方間距 */
+            padding: 10px 20px; /* 內邊距 */
+            font-size: 18px; /* 字體大小 */
+            border: none; /* 無邊框 */
+            background-color: #f67c5f; /* 背景顏色 */
+            color: #fff; /* 字體顏色 */
+            border-radius: 5px; /* 圓角 */
+            cursor: pointer; /* 滑鼠指針變為手型 */
+        }
+        /* 回到主頁按鈕樣式 */
+        #home-button {
+            display: none; /* 預設隱藏 */
+            margin-top: 20px; /* 增加上方間距 */
+            padding: 10px 20px; /* 內邊距 */
+            font-size: 18px; /* 字體大小 */
+            border: none; /* 無邊框 */
+            background-color: #8f7a66; /* 背景顏色 */
+            color: #fff; /* 字體顏色 */
+            border-radius: 5px; /* 圓角 */
+            cursor: pointer; /* 滑鼠指針變為手型 */
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3); /* 陰影效果 */
+            transition: background-color 0.3s; /* 過渡效果 */
+        }
+        #home-button:hover {
+            background-color: #a08d7a; /* 鼠標懸停時的背景顏色 */
+        }
+        /* 意見反饋按鈕樣式 */
+        #feedback {
+            position: fixed; /* 固定定位 */
+            bottom: 20px; /* 距離底部 20px */
+            right: 20px; /* 距離右側 20px */
+            background-color: #8f7a66; /* 背景顏色 */
+            color: #fff; /* 字體顏色 */
+            padding: 10px 15px; /* 內邊距 */
+            border-radius: 8px; /* 圓角 */
+            font-weight: bold; /* 字體粗細 */
+            text-decoration: none; /* 無下劃線 */
+            font-size: 16px; /* 字體大小 */
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3); /* 陰影效果 */
+            transition: background-color 0.3s; /* 過渡效果 */
+            z-index: 5; /* 確保在其他元素之上，但低於 game-over */
+        }
+        #feedback:hover {
+            background-color: #a08d7a; /* 鼠標懸停時的背景顏色 */
         }
     </style>
 </head>
 <body>
     <div id="difficulty-selection">
         <p>選擇難度：</p>
+        <button onclick="startTutorial()">教學模式</button>
         <button onclick="setBoardSize(4)">4x4</button>
         <button onclick="setBoardSize(5)">5x5</button>
         <button onclick="setBoardSize(6)">6x6</button>
@@ -106,35 +153,139 @@
         <p>Game Over!</p>
         <button onclick="restartGame()">Restart</button>
     </div>
-    <script>
-        let boardSize = 4; 
-        let board = [];
-        let score = 0;
+    <button id="home-button" onclick="goHome()">回到主頁</button>
 
+    <script>
+        /* 全域變數 */
+        let boardSize = 4; // 遊戲板的尺寸 (例如 4x4, 5x5)
+        let board = []; // 遊戲板的二維陣列，儲存方塊數值
+        let score = 0; // 當前分數
+        let isTutorial = false; // 是否處於教學模式
+        let tutorialStep = 0; // 教學模式的步驟
+
+        // 教學模式的步驟定義
+        const tutorialSteps = [
+            {
+                message: '歡迎來到2048教學！首先，試著向左滑，讓兩個 2 合併成 4！',
+                board: [
+                    [2, 2, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                ],
+                expectedMove: 'left' // 此步驟預期的移動方向
+            },
+            {
+                message: '太棒了！現在，請向上滑，準備迎接下一個合併！',
+                board: [
+                    [0, 0, 0, 0],
+                    [4, 0, 0, 0],
+                    [4, 0, 0, 0],
+                    [0, 0, 0, 0],
+                ],
+                expectedMove: 'up' // 此步驟預期的移動方向
+            },
+            {
+                message: '完美收工 🎉 你已經學會2048怎麼玩了！',
+                board: [
+                    [8, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                ],
+                expectedMove: null // 沒有預期動作，表示教學模式結束
+            }
+        ];
+
+        /* 取得 DOM 元素 */
         const gameBoard = document.getElementById('game-board');
         const scoreDisplay = document.getElementById('score');
         const gameOverDisplay = document.getElementById('game-over');
         const difficultySelection = document.getElementById('difficulty-selection');
         const scoreBoard = document.getElementById('score-board');
+        const homeButton = document.getElementById('home-button'); // 回到主頁按鈕
 
-        
-        function setBoardSize(size) {
-            boardSize = size;
-            difficultySelection.style.display = 'none';
-            scoreBoard.style.display = 'block';
-            gameBoard.style.display = 'grid';
-            gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, 100px)`;
-            gameBoard.style.gridGap = '10px';
-            initGame();
+        /**
+         * 啟動教學模式。
+         * 設置教學模式相關變數，隱藏難度選擇，顯示遊戲介面，並加載第一步教學。
+         */
+        function startTutorial() {
+            isTutorial = true;
+            tutorialStep = 0;
+            difficultySelection.style.display = 'none'; // 隱藏難度選擇
+            scoreBoard.style.display = 'block'; // 顯示分數板
+            gameBoard.style.display = 'grid'; // 顯示遊戲板
+            gameBoard.style.gridTemplateColumns = `repeat(4, 100px)`; // 教學模式固定 4x4 網格
+            gameBoard.style.gridGap = '10px'; // 網格間距
+            homeButton.style.display = 'block'; // 顯示回到主頁按鈕
+            loadTutorialStep(); // 加載教學模式的第一步
         }
 
-        
+        /**
+         * 加載教學模式的指定步驟。
+         * 根據 tutorialStep 載入對應的遊戲板狀態和訊息。
+         */
+        function loadTutorialStep() {
+            const step = tutorialSteps[tutorialStep]; // 取得當前教學步驟的資料
+            boardSize = 4; // 教學模式限定 4x4
+            board = JSON.parse(JSON.stringify(step.board)); // 深拷貝教學板狀態到當前遊戲板
+            score = 0; // 分數歸零
+            updateScore(0); // 更新分數顯示
+            gameBoard.innerHTML = ''; // 清空遊戲板上的所有方塊
+            // 根據 boardSize 創建新的方塊元素並添加到遊戲板
+            for (let row = 0; row < boardSize; row++) {
+                for (let col = 0; col < boardSize; col++) {
+                    const tile = document.createElement('div');
+                    tile.className = 'tile';
+                    tile.dataset.row = row; // 儲存行索引
+                    tile.dataset.col = col; // 儲存列索引
+                    gameBoard.appendChild(tile);
+                }
+            }
+            updateBoard(); // 更新遊戲板的視覺狀態
+            showMessage(step.message); // 顯示當前步驟的提示訊息
+            // 隱藏重新開始按鈕，直到教學結束或遊戲結束
+            gameOverDisplay.querySelector('button').style.display = 'none';
+        }
+
+        /**
+         * 顯示遊戲結束或勝利訊息。
+         * @param {string} msg - 要顯示的訊息。
+         */
+        function showMessage(msg) {
+            gameOverDisplay.style.display = 'block'; // 顯示遊戲結束畫面
+            gameOverDisplay.querySelector('p').textContent = msg; // 更新訊息文字
+        }
+
+        /**
+         * 設置遊戲板尺寸並開始遊戲。
+         * @param {number} size - 遊戲板的尺寸 (例如 4, 5, 6, 7)。
+         */
+        function setBoardSize(size) {
+            boardSize = size;
+            isTutorial = false; // 退出教學模式
+            difficultySelection.style.display = 'none'; // 隱藏難度選擇
+            scoreBoard.style.display = 'block'; // 顯示分數板
+            gameBoard.style.display = 'grid'; // 顯示遊戲板
+            // 根據選定的尺寸設定網格列數
+            gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, 100px)`;
+            gameBoard.style.gridGap = '10px'; // 網格間距
+            homeButton.style.display = 'block'; // 顯示回到主頁按鈕
+            initGame(); // 初始化遊戲
+        }
+
+        /**
+         * 初始化遊戲。
+         * 重置分數、遊戲板，並生成兩個初始方塊。
+         */
         function initGame() {
-            score = 0;
-            updateScore(0);
-            gameOverDisplay.style.display = 'none';
+            score = 0; // 分數歸零
+            updateScore(0); // 更新分數顯示
+            gameOverDisplay.style.display = 'none'; // 隱藏遊戲結束畫面
+            // 初始化一個填充 0 的二維陣列作為遊戲板
             board = Array.from({ length: boardSize }, () => Array(boardSize).fill(0));
-            gameBoard.innerHTML = '';
+            gameBoard.innerHTML = ''; // 清空遊戲板上的所有方塊
+            // 根據 boardSize 創建新的方塊元素並添加到遊戲板
             for (let row = 0; row < boardSize; row++) {
                 for (let col = 0; col < boardSize; col++) {
                     const tile = document.createElement('div');
@@ -144,35 +295,44 @@
                     gameBoard.appendChild(tile);
                 }
             }
-            addRandomTile();
-            addRandomTile();
-            updateBoard();
+            addRandomTile(); // 添加第一個隨機方塊
+            addRandomTile(); // 添加第二個隨機方塊
+            updateBoard(); // 更新遊戲板的視覺狀態
         }
 
-        
+        /**
+         * 在隨機的空位添加一個新的方塊 (2 或 4)。
+         */
         function addRandomTile() {
-            const emptyTiles = [];
+            const emptyTiles = []; // 儲存所有空方塊的位置
             for (let row = 0; row < boardSize; row++) {
                 for (let col = 0; col < boardSize; col++) {
                     if (board[row][col] === 0) {
-                        emptyTiles.push({ row, col });
+                        emptyTiles.push({ row, col }); // 如果方塊為 0 (空)，則加入列表
                     }
                 }
             }
             if (emptyTiles.length > 0) {
+                // 從空方塊中隨機選擇一個位置
                 const { row, col } = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
+                // 90% 機率生成 2，10% 機率生成 4
                 board[row][col] = Math.random() < 0.9 ? 2 : 4;
             }
         }
 
-        
+        /**
+         * 更新遊戲板的視覺狀態 (HTML)。
+         * 根據 board 陣列的數值更新每個方塊的內容和樣式。
+         */
         function updateBoard() {
             for (let row = 0; row < boardSize; row++) {
                 for (let col = 0; col < boardSize; col++) {
+                    // 根據 data-row 和 data-col 屬性找到對應的方塊元素
                     const tile = document.querySelector(`.tile[data-row='${row}'][data-col='${col}']`);
-                    const value = board[row][col];
-                    tile.textContent = value === 0 ? '' : value;
-                    tile.dataset.value = value;
+                    const value = board[row][col]; // 取得方塊數值
+                    tile.textContent = value === 0 ? '' : value; // 如果為 0 則顯示為空字串，否則顯示數值
+                    tile.dataset.value = value; // 設置 data-value 屬性，用於 CSS 樣式
+                    // 移除 merge 類別，為下一次可能的動畫做準備
                     if (tile.classList.contains('merge')) {
                         tile.classList.remove('merge');
                     }
@@ -180,115 +340,236 @@
             }
         }
 
-        
+        /**
+         * 更新分數。
+         * @param {number} points - 要增加的分數。
+         */
         function updateScore(points) {
-            score += points;
-            scoreDisplay.textContent = score;
+            score += points; // 增加分數
+            scoreDisplay.textContent = score; // 更新分數顯示
         }
 
-        
+        /**
+         * 將一行 (或列) 中的非零數字滑動到一側，並用零填充空位。
+         * @param {Array<number>} row - 要處理的一行或一列數字。
+         * @returns {Array<number>} - 滑動後的數字陣列。
+         */
         function slide(row) {
-            const filtered = row.filter(val => val);
-            const zeros = Array(boardSize - filtered.length).fill(0);
-            return [...filtered, ...zeros];
+            const filtered = row.filter(val => val); // 過濾掉所有 0
+            const zeros = Array(row.length - filtered.length).fill(0); // 根據原始長度計算需要補充的 0 數量
+            return [...filtered, ...zeros]; // 將非零數字和 0 合併
         }
 
-        
+        /**
+         * 合併一行 (或列) 中相鄰且相同數值的方塊。
+         * @param {Array<number>} row - 要處理的一行或一列數字。
+         * @returns {Array<number>} - 合併後的數字陣列。
+         */
         function combine(row) {
             for (let i = 0; i < row.length - 1; i++) {
-                if (row[i] !== 0 && row[i] === row[i + 1]) {
-                    row[i] *= 2;
-                    updateScore(row[i]);
-
-                    // 找到目標方塊
-                    const tile = document.querySelector(`.tile[data-row='${board.indexOf(row)}'][data-col='${i}']`);
-                    if (tile) {
-                        console.log(`Adding merge animation to tile at row ${board.indexOf(row)}, col ${i}`);
-                        tile.classList.add('merge');
-                        tile.addEventListener('animationend', () => {
-                            console.log(`Animation ended for tile at row ${board.indexOf(row)}, col ${i}`);
-                            tile.classList.remove('merge');
-                        }, { once: true });
-                    } else {
-                        console.error(`Tile not found at row ${board.indexOf(row)}, col ${i}`);
-                    }
-
-                    row[i + 1] = 0;
+                if (row[i] !== 0 && row[i] === row[i + 1]) { // 如果當前和下一個方塊相同且不為 0
+                    row[i] *= 2; // 當前方塊數值翻倍
+                    updateScore(row[i]); // 更新分數
+                    row[i + 1] = 0; // 下一個方塊歸零 (被合併)
+                    // 注意：在此處加入合併動畫 (需要確保 tile 元素存在且動畫設定正確)
+                    // 目前註解掉，因為直接在這裡操作 DOM 可能會和 updateBoard 函式衝突，
+                    // 更穩健的做法是在 move 函式中追蹤變動並統一處理動畫。
+                    // 例如，記錄哪些方塊發生了合併，然後在 updateBoard 後應用動畫。
                 }
             }
-            return row;
+            return row; // 返回處理後的行
         }
 
-        
+        /**
+         * 處理遊戲板的移動邏輯。
+         * 根據指定方向滑動和合併方塊，並在移動後添加新方塊（非教學模式）。
+         * @param {string} direction - 移動方向 ('left', 'right', 'up', 'down')。
+         */
         function move(direction) {
-            let moved = false;
+            // 如果是教學模式，檢查玩家的移動是否符合預期
+            if (isTutorial) {
+                const step = tutorialSteps[tutorialStep];
+                if (step.expectedMove && direction !== step.expectedMove) { // 如果有預期動作且方向不符
+                    alert('錯了喔！這步要往「' + step.expectedMove + '」才對，照提示做啦！');
+                    return; // 錯誤方向，不執行後續移動邏輯
+                }
+            }
+
+            let moved = false; // 標記是否有方塊實際移動或合併
+            // 深拷貝移動前的板面狀態，用於判斷是否有實際移動
+            const originalBoard = JSON.parse(JSON.stringify(board));
+
+            // 根據移動方向處理每一行或每一列
             for (let i = 0; i < boardSize; i++) {
-                let row;
+                let line; // line 可能是 row (橫向移動) 或 column (縱向移動)
                 if (direction === 'left' || direction === 'right') {
-                    row = [...board[i]];
-                    if (direction === 'right') row.reverse();
-                    const originalRow = [...row];
-                    row = combine(slide(row));
-                    if (direction === 'right') row.reverse();
-                    board[i] = row;
-                    if (!moved && row.join() !== originalRow.join()) moved = true;
-                } else {
-                    row = board.map(r => r[i]);
-                    if (direction === 'down') row.reverse();
-                    const originalRow = [...row];
-                    row = combine(slide(row));
-                    if (direction === 'down') row.reverse();
+                    line = [...board[i]]; // 取得當前行
+                    if (direction === 'right') line.reverse(); // 向右移動則反轉行
+
+                    line = combine(slide(line)); // 滑動並合併
+                    if (direction === 'right') line.reverse(); // 向右移動則再次反轉恢復順序
+                    board[i] = line; // 更新遊戲板的行
+                } else { // 'up' or 'down' (處理列)
+                    line = board.map(r => r[i]); // 取得當前列
+                    if (direction === 'down') line.reverse(); // 向下移動則反轉列
+
+                    line = combine(slide(line)); // 滑動並合併
+                    if (direction === 'down') line.reverse(); // 向下移動則再次反轉恢復順序
+                    // 將處理後的列重新賦值回遊戲板
                     for (let j = 0; j < boardSize; j++) {
-                        if (board[j][i] !== row[j]) moved = true;
-                        board[j][i] = row[j];
+                        board[j][i] = line[j];
                     }
                 }
             }
+
+            // 檢查移動前後板面是否有任何變化，判斷是否有實際移動
+            for(let r = 0; r < boardSize; r++) {
+                for(let c = 0; c < boardSize; c++) {
+                    if (originalBoard[r][c] !== board[r][c]) {
+                        moved = true; // 有變化表示有移動
+                        break;
+                    }
+                }
+                if (moved) break;
+            }
+
+            // 如果有方塊移動或合併
             if (moved) {
-                addRandomTile();
-                updateBoard();
-                if (isGameOver()) {
-                    gameOverDisplay.style.display = 'block';
+                if (isTutorial) {
+                    updateBoard(); // 更新 UI
+                    tutorialStep++; // 進入教學模式的下一步
+                    if (tutorialStep < tutorialSteps.length) {
+                        // 稍微延遲，讓玩家看到合併效果後再加載下一步
+                        setTimeout(loadTutorialStep, 500);
+                    } else {
+                        // 教學結束
+                        showMessage('完美收工 🎉 你已經學會2048怎麼玩了！');
+                        // 顯示重新開始按鈕，並確保其綁定 restartGame
+                        gameOverDisplay.querySelector('button').style.display = 'inline-block';
+                        gameOverDisplay.querySelector('button').onclick = restartGame;
+                        isTutorial = false; // 退出教學模式
+                    }
+                } else {
+                    // 一般遊戲模式
+                    addRandomTile(); // 添加一個新的隨機方塊
+                    updateBoard(); // 更新 UI
+                    if (checkWin()) { // 檢查是否達到 2048 勝利
+                        showMessage('你贏了啦！🎉🎉');
+                        gameOverDisplay.querySelector('button').style.display = 'inline-block';
+                        gameOverDisplay.querySelector('button').onclick = restartGame;
+                    } else if (isGameOver()) { // 檢查遊戲是否結束
+                        gameOverDisplay.style.display = 'block';
+                        gameOverDisplay.querySelector('button').style.display = 'inline-block';
+                        gameOverDisplay.querySelector('button').onclick = restartGame;
+                    }
                 }
             }
         }
 
-        
+        /**
+         * 檢查遊戲是否結束 (沒有可移動的方塊或可合併的方塊)。
+         * @returns {boolean} - 如果遊戲結束返回 true，否則返回 false。
+         */
         function isGameOver() {
             for (let row = 0; row < boardSize; row++) {
                 for (let col = 0; col < boardSize; col++) {
-                    if (board[row][col] === 0) return false;
+                    if (board[row][col] === 0) return false; // 還有空位，未結束
+                    // 檢查水平方向是否有可合併的方塊
                     if (col < boardSize - 1 && board[row][col] === board[row][col + 1]) return false;
+                    // 檢查垂直方向是否有可合併的方塊
                     if (row < boardSize - 1 && board[row][col] === board[row + 1][col]) return false;
                 }
             }
-            return true;
+            return true; // 沒有空位且沒有可合併的方塊，遊戲結束
         }
 
-        
+        /**
+         * 重新開始遊戲。
+         */
         function restartGame() {
-            initGame();
+            initGame(); // 重新初始化遊戲
+            gameOverDisplay.querySelector('button').onclick = restartGame; // 確保按鈕重新綁定
         }
 
-       
+        /**
+         * 回到主頁面 (難度選擇畫面)。
+         */
+        function goHome() {
+            isTutorial = false; // 確保退出教學模式
+            gameOverDisplay.style.display = 'none'; // 隱藏遊戲結束/勝利訊息
+            scoreBoard.style.display = 'none'; // 隱藏分數板
+            gameBoard.style.display = 'none'; // 隱藏遊戲板
+            homeButton.style.display = 'none'; // 隱藏回到主頁按鈕
+            difficultySelection.style.display = 'flex'; // 顯示難度選擇
+        }
+
+        /* 事件監聽器 */
+
+        // 鍵盤控制 (箭頭鍵)
         document.addEventListener('keydown', e => {
-            switch (e.key) {
-                case 'ArrowLeft':
-                    move('left');
-                    break;
-                case 'ArrowRight':
-                    move('right');
-                    break;
-                case 'ArrowUp':
-                    move('up');
-                    break;
-                case 'ArrowDown':
-                    move('down');
-                    break;
+            // 檢查是否為方向鍵
+            if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+                e.preventDefault(); // 防止頁面滾動 (當使用方向鍵時)
+                switch (e.key) {
+                    case 'ArrowLeft':
+                        move('left');
+                        break;
+                    case 'ArrowRight':
+                        move('right');
+                        break;
+                    case 'ArrowUp':
+                        move('up');
+                        break;
+                    case 'ArrowDown':
+                        move('down');
+                        break;
+                }
             }
         });
 
-        initGame();
+        // 手機觸控滑動控制
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        // 觸摸開始事件
+        document.addEventListener('touchstart', function(e) {
+            touchStartX = e.touches[0].clientX; // 記錄觸摸開始的 X 座標
+            touchStartY = e.touches[0].clientY; // 記錄觸摸開始的 Y 座標
+        }, { passive: false }); // 使用 passive: false 允許在事件處理器中調用 preventDefault
+
+        // 觸摸結束事件 (判斷滑動方向)
+        document.addEventListener('touchend', function(e) {
+            const dx = e.changedTouches[0].clientX - touchStartX; // 計算 X 方向的移動距離
+            const dy = e.changedTouches[0].clientY - touchStartY; // 計算 Y 方向的移動距離
+
+            const minSwipeDistance = 30; // 定義最小滑動距離，避免誤觸
+            // 判斷是水平滑動還是垂直滑動，並執行對應的移動
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > minSwipeDistance) {
+                if (dx > 0) move('right'); // 向右滑動
+                else move('left'); // 向左滑動
+            } else if (Math.abs(dy) > minSwipeDistance) {
+                if (dy > 0) move('down'); // 向下滑動
+                else move('up'); // 向上滑動
+            }
+            e.preventDefault(); // 防止點擊觸發其他行為 (例如手機瀏覽器的預設滾動)
+        }, { passive: false });
+
+        /**
+         * 檢查遊戲是否勝利 (達到 2048 方塊)。
+         * @returns {boolean} - 如果勝利返回 true，否則返回 false。
+         */
+        function checkWin() {
+            for (let row = 0; row < boardSize; row++) {
+                for (let col = 0; col < boardSize; col++) {
+                    if (board[row][col] === 2048) {
+                        return true; // 找到 2048 方塊，勝利
+                    }
+                }
+            }
+            return false; // 未找到 2048 方塊
+        }
     </script>
+    <a id="feedback" href="https://mail.google.com/mail/?view=cm&fs=1&to=hsc0529.myself.tw@gmail.com" target="_blank">意見反饋</a>
+
 </body>
 </html>
