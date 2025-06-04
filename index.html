@@ -218,6 +218,7 @@
             gameBoard.style.gridTemplateColumns = `repeat(4, 100px)`; // 教學模式固定 4x4 網格
             gameBoard.style.gridGap = '10px'; // 網格間距
             homeButton.style.display = 'block'; // 顯示回到主頁按鈕
+            initGame(); // 先初始化遊戲板的空方塊，再加載教學步驟的內容
             loadTutorialStep(); // 加載教學模式的第一步
         }
 
@@ -231,17 +232,7 @@
             board = JSON.parse(JSON.stringify(step.board)); // 深拷貝教學板狀態到當前遊戲板
             score = 0; // 分數歸零
             updateScore(0); // 更新分數顯示
-            gameBoard.innerHTML = ''; // 清空遊戲板上的所有方塊
-            // 根據 boardSize 創建新的方塊元素並添加到遊戲板
-            for (let row = 0; row < boardSize; row++) {
-                for (let col = 0; col < boardSize; col++) {
-                    const tile = document.createElement('div');
-                    tile.className = 'tile';
-                    tile.dataset.row = row; // 儲存行索引
-                    tile.dataset.col = col; // 儲存列索引
-                    gameBoard.appendChild(tile);
-                }
-            }
+            // gameBoard.innerHTML = ''; // 在 initGame 已經清空並創建，這裡不需要重複
             updateBoard(); // 更新遊戲板的視覺狀態
             showMessage(step.message); // 顯示當前步驟的提示訊息
             // 隱藏重新開始按鈕，直到教學結束或遊戲結束
@@ -369,12 +360,8 @@
             for (let i = 0; i < row.length - 1; i++) {
                 if (row[i] !== 0 && row[i] === row[i + 1]) { // 如果當前和下一個方塊相同且不為 0
                     row[i] *= 2; // 當前方塊數值翻倍
-                    updateScore(row[i]); // 更新分數
+                    updateScore(row[i]); // <--- 這裡就是計分的地方！將新生成的方塊數值加到總分
                     row[i + 1] = 0; // 下一個方塊歸零 (被合併)
-                    // 注意：在此處加入合併動畫 (需要確保 tile 元素存在且動畫設定正確)
-                    // 目前註解掉，因為直接在這裡操作 DOM 可能會和 updateBoard 函式衝突，
-                    // 更穩健的做法是在 move 函式中追蹤變動並統一處理動畫。
-                    // 例如，記錄哪些方塊發生了合併，然後在 updateBoard 後應用動畫。
                 }
             }
             return row; // 返回處理後的行
@@ -415,7 +402,6 @@
 
                     line = combine(slide(line)); // 滑動並合併
                     if (direction === 'down') line.reverse(); // 向下移動則再次反轉恢復順序
-                    // 將處理後的列重新賦值回遊戲板
                     for (let j = 0; j < boardSize; j++) {
                         board[j][i] = line[j];
                     }
@@ -454,7 +440,7 @@
                     addRandomTile(); // 添加一個新的隨機方塊
                     updateBoard(); // 更新 UI
                     if (checkWin()) { // 檢查是否達到 2048 勝利
-                        showMessage('你贏了啦！🎉🎉');
+                        showMessage('你贏了幹！🎉🎉');
                         gameOverDisplay.querySelector('button').style.display = 'inline-block';
                         gameOverDisplay.querySelector('button').onclick = restartGame;
                     } else if (isGameOver()) { // 檢查遊戲是否結束
@@ -527,18 +513,46 @@
             }
         });
 
-        // 手機觸控滑動控制
+        // --- 手機觸控滑動控制優化 (專注於遊戲板內的滑動，避免影響外部按鈕) ---
         let touchStartX = 0;
         let touchStartY = 0;
+        let touchMoved = false; // 旗標，追蹤在遊戲板內是否有實際滑動
 
-        // 觸摸開始事件
-        document.addEventListener('touchstart', function(e) {
+        // 監聽遊戲板的 touchstart 事件：記錄起始座標，並重置 touchMoved 旗標。
+        // 使用 { passive: true } 可以在這裡不阻止預設行為，優化滾動性能。
+        // 這樣外部按鈕的點擊不會被 gameBoard 的 touchstart 影響。
+        gameBoard.addEventListener('touchstart', function(e) {
             touchStartX = e.touches[0].clientX; // 記錄觸摸開始的 X 座標
             touchStartY = e.touches[0].clientY; // 記錄觸摸開始的 Y 座標
-        }, { passive: false }); // 使用 passive: false 允許在事件處理器中調用 preventDefault
+            touchMoved = false; // 每次觸摸開始時重置為 false
+        }, { passive: true });
 
-        // 觸摸結束事件 (判斷滑動方向)
-        document.addEventListener('touchend', function(e) {
+        // 監聽遊戲板的 touchmove 事件：判斷是否有足夠的移動量，並在移動時阻止頁面滾動。
+        // passive: false 是必要的，因為我們在這裡呼叫了 preventDefault()，
+        // 以確保只有在遊戲板內滑動時才阻止頁面滾動，而不影響其他區域。
+        gameBoard.addEventListener('touchmove', function(e) {
+            const dx = e.touches[0].clientX - touchStartX;
+            const dy = e.touches[0].clientY - touchStartY;
+            const minMoveThreshold = 10; // 定義一個小閾值 (例如 10 像素)，超過即視為移動
+            if (Math.abs(dx) > minMoveThreshold || Math.abs(dy) > minMoveThreshold) {
+                touchMoved = true; // 設置為 true 表示有滑動發生
+            }
+            // 在這裡阻止預設行為，防止頁面滾動。只有在遊戲板內移動時才有效。
+            e.preventDefault();
+        }, { passive: false });
+
+        // 監聽遊戲板的 touchend 事件：根據是否有滑動來執行遊戲邏輯。
+        // 如果沒有滑動（視為點擊），則不執行遊戲邏輯，讓事件繼續傳播，
+        // 這樣遊戲板上的按鈕（如 Restart）可以正常點擊。
+        // passive: true 確保按鈕點擊事件不會被這個監聽器阻塞。
+        gameBoard.addEventListener('touchend', function(e) {
+            // 如果沒有偵測到明顯的滑動 (即 touchMoved 仍為 false)，
+            // 則認為這是一次點擊操作，不執行遊戲移動邏輯。
+            // 這也確保了遊戲結束後的 "Restart" 按鈕在手機上可以正常點擊。
+            if (!touchMoved) {
+                return; // 不執行遊戲移動邏輯
+            }
+
             const dx = e.changedTouches[0].clientX - touchStartX; // 計算 X 方向的移動距離
             const dy = e.changedTouches[0].clientY - touchStartY; // 計算 Y 方向的移動距離
 
@@ -551,8 +565,10 @@
                 if (dy > 0) move('down'); // 向下滑動
                 else move('up'); // 向上滑動
             }
-            e.preventDefault(); // 防止點擊觸發其他行為 (例如手機瀏覽器的預設滾動)
-        }, { passive: false });
+            // 不需要在這裡再次呼叫 e.preventDefault()，因為 touchmove 已經處理過了頁面滾動。
+            // 這樣按鈕的點擊事件就可以正常觸發。
+        }, { passive: true });
+        // --- 觸控事件優化結束 ---
 
         /**
          * 檢查遊戲是否勝利 (達到 2048 方塊)。
