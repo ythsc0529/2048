@@ -7,14 +7,31 @@
     <style>
         /* 整體頁面樣式設定 */
         body {
-            font-family: Arial, sans-serif; /* 設定字體 */
-            display: flex; /* 使用 Flexbox 佈局 */
-            flex-direction: column; /* 垂直排列子元素 */
-            justify-content: center; /* 垂直居中對齊 */
-            align-items: center; /* 水平居中對齊 */
-            height: 100vh; /* 佔滿整個視窗高度 */
-            margin: 0; /* 移除預設外邊距 */
-            background-color: #faf8ef; /* 設定背景顏色 */
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* 在小螢幕上保持佔滿視窗高度 */
+            margin: 0;
+            background-color: #faf8ef;
+        }
+
+        /* 針對螢幕寬度小於或等於 767px (通常為手機/平板) 應用特定樣式 */
+        @media (max-width: 767px) {
+            body {
+                overflow: hidden; /* 防止手機滾動，只在手機上生效 */
+            }
+        }
+
+        /* 針對螢幕寬度大於或等於 768px (通常為平板/桌面) 應用特定樣式 */
+        @media (min-width: 768px) {
+            body {
+                height: auto; /* 在桌面版時，高度自動適應內容 */
+                min-height: 100vh; /* 至少佔滿一個視窗高度 */
+                overflow-y: auto; /* 允許垂直滾動條出現，如果內容超出 */
+                overflow-x: hidden; /* 水平方向不允許滾動，避免不必要的橫向滾動條 */
+            }
         }
         /* 分數板樣式 */
         #score-board {
@@ -26,17 +43,22 @@
         /* 遊戲板樣式 */
         #game-board {
             display: grid; /* 使用 Grid 佈局 */
-            grid-gap: 10px; /* 網格間距 */
             background-color: #bbada0; /* 背景顏色 */
             padding: 10px; /* 內邊距 */
             border-radius: 10px; /* 圓角 */
             position: relative; /* 相對定位，用於遊戲結束畫面的絕對定位 */
             justify-content: center; /* 水平居中 */
+            /* 使用 CSS 變數動態設定網格間距和方塊大小 */
+            --grid-gap: 10px; /* 預設網格間距 */
+            grid-gap: var(--grid-gap); /* 網格間距 */
+            /* 最大寬度限制，確保在PC上不會太大 */
+            max-width: calc(var(--tile-size) * var(--board-size) + var(--grid-gap) * (var(--board-size) + 1));
         }
         /* 方塊(tile)的通用樣式 */
         .tile {
-            width: 100px; /* 寬度 */
-            height: 100px; /* 高度 */
+            /* 關鍵修正：方塊大小使用動態計算 */
+            width: var(--tile-size);
+            height: var(--tile-size);
             background-color: #cdc1b4; /* 預設背景顏色 */
             display: flex; /* 使用 Flexbox 居中內容 */
             justify-content: center; /* 水平居中 */
@@ -47,6 +69,9 @@
             border-radius: 5px; /* 圓角 */
             transition: transform 0.2s, background-color 0.2s; /* 過渡效果，用於動畫 */
         }
+        /* 字體大小響應式調整 (針對不同大小的方塊) */
+        .tile[data-value="128"], .tile[data-value="256"], .tile[data-value="512"] { font-size: 30px; }
+        .tile[data-value="1024"], .tile[data-value="2048"] { font-size: 24px; }
         /* 不同數值的方塊背景顏色和字體顏色 */
         .tile[data-value="2"] { background-color: #eee4da; }
         .tile[data-value="4"] { background-color: #ede0c8; }
@@ -117,8 +142,31 @@
         #home-button:hover {
             background-color: #a08d7a; /* 鼠標懸停時的背景顏色 */
         }
-        /* 意見反饋按鈕樣式 */
-        #feedback {
+        /* 難度選擇區塊樣式 */
+        #difficulty-selection {
+            display: flex; /* 使用 Flexbox 佈局 */
+            flex-direction: column; /* 垂直排列 */
+            gap: 15px; /* 按鈕間距 */
+            align-items: center; /* 水平居中 */
+        }
+        #difficulty-selection button {
+            padding: 12px 25px; /* 內邊距 */
+            font-size: 20px; /* 字體大小 */
+            border: none; /* 無邊框 */
+            background-color: #8f7a66; /* 背景顏色 */
+            color: #fff; /* 字體顏色 */
+            border-radius: 8px; /* 圓角 */
+            cursor: pointer; /* 滑鼠指針變為手型 */
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3); /* 陰影效果 */
+            transition: background-color 0.3s; /* 過渡效果 */
+            width: 180px; /* 固定按鈕寬度，讓它們對齊 */
+        }
+        #difficulty-selection button:hover {
+            background-color: #a08d7a; /* 鼠標懸停時的背景顏色 */
+        }
+
+        /* 新增：意見反饋主要按鈕樣式 */
+        #main-feedback-button {
             position: fixed; /* 固定定位 */
             bottom: 20px; /* 距離底部 20px */
             right: 20px; /* 距離右側 20px */
@@ -132,9 +180,41 @@
             box-shadow: 2px 2px 5px rgba(0,0,0,0.3); /* 陰影效果 */
             transition: background-color 0.3s; /* 過渡效果 */
             z-index: 5; /* 確保在其他元素之上，但低於 game-over */
+            cursor: pointer; /* 滑鼠指針變為手型 */
+            border: none; /* 移除按鈕預設邊框 */
         }
-        #feedback:hover {
+        #main-feedback-button:hover {
             background-color: #a08d7a; /* 鼠標懸停時的背景顏色 */
+        }
+
+        /* 新增：意見反饋選項容器樣式 */
+        #feedback-options {
+            display: none; /* 預設隱藏 */
+            flex-direction: column; /* 垂直排列 */
+            gap: 10px; /* 按鈕間距 */
+            position: fixed; /* 固定定位 */
+            bottom: 20px; /* 距離底部 20px */
+            right: 20px; /* 距離右側 20px */
+            background-color: rgba(255, 255, 255, 0.9); /* 半透明白色背景 */
+            padding: 15px; /* 內邊距 */
+            border-radius: 8px; /* 圓角 */
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.2); /* 陰影效果 */
+            z-index: 6; /* 比主按鈕高一點 */
+        }
+
+        /* 新增：意見反饋選項按鈕樣式 */
+        #feedback-options button {
+            background-color: #6d5e53; /* 深一點的顏色 */
+            color: #fff;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        #feedback-options button:hover {
+            background-color: #776e65;
         }
     </style>
 </head>
@@ -150,10 +230,17 @@
     <div id="score-board" style="display: none;">Score: <span id="score">0</span></div>
     <div id="game-board" style="display: none;"></div>
     <div id="game-over" style="display: none;">
-        <p>Game Over!</p>
+        <p id="game-over-message">Game Over!</p>
         <button onclick="restartGame()">Restart</button>
     </div>
     <button id="home-button" onclick="goHome()">回到主頁</button>
+
+    <button id="main-feedback-button">意見反饋</button>
+
+    <div id="feedback-options">
+        <button id="feedback-web">未安裝 Gmail 程式 (電腦點這個)</button>
+        <button id="feedback-app">已安裝 Gmail 程式 (手機點這個)</button>
+    </div>
 
     <script>
         /* 全域變數 */
@@ -162,6 +249,7 @@
         let score = 0; // 當前分數
         let isTutorial = false; // 是否處於教學模式
         let tutorialStep = 0; // 教學模式的步驟
+        let gameActive = false; // 新增旗標：遊戲是否活躍 (可以滑動)
 
         // 教學模式的步驟定義
         const tutorialSteps = [
@@ -201,9 +289,46 @@
         const gameBoard = document.getElementById('game-board');
         const scoreDisplay = document.getElementById('score');
         const gameOverDisplay = document.getElementById('game-over');
+        const gameOverMessage = document.getElementById('game-over-message'); // 取得訊息元素
         const difficultySelection = document.getElementById('difficulty-selection');
         const scoreBoard = document.getElementById('score-board');
         const homeButton = document.getElementById('home-button'); // 回到主頁按鈕
+
+        // 新增：意見反饋相關 DOM 元素
+        const mainFeedbackButton = document.getElementById('main-feedback-button');
+        const feedbackOptions = document.getElementById('feedback-options');
+        const feedbackWebButton = document.getElementById('feedback-web');
+        const feedbackAppButton = document.getElementById('feedback-app');
+
+        // --- 意見反饋彈出邏輯 ---
+        const emailAddress = "hsc0529.myself.tw@gmail.com";
+        const subject = "2048遊戲意見反饋";
+        const body = "（請在此輸入您的意見或建議）";
+
+        mainFeedbackButton.addEventListener('click', () => {
+            // 點擊主按鈕時，切換選項容器的顯示狀態
+            feedbackOptions.style.display = feedbackOptions.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        feedbackWebButton.addEventListener('click', () => {
+            // 未安裝 Gmail 程式 (電腦點這個) -> 跳轉到網頁版 Gmail
+            window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${emailAddress}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
+            feedbackOptions.style.display = 'none'; // 隱藏選項
+        });
+
+        feedbackAppButton.addEventListener('click', () => {
+            // 已安裝 Gmail 程式 (手機點這個) -> 嘗試開啟郵件應用程式 (mailto)
+            window.location.href = `mailto:${emailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            feedbackOptions.style.display = 'none'; // 隱藏選項
+        });
+
+        // 點擊選項外部區域時隱藏選項
+        document.addEventListener('click', (event) => {
+            if (!feedbackOptions.contains(event.target) && event.target !== mainFeedbackButton) {
+                feedbackOptions.style.display = 'none';
+            }
+        });
+        // --- 意見反饋彈出邏輯 END ---
 
         /**
          * 啟動教學模式。
@@ -212,14 +337,26 @@
         function startTutorial() {
             isTutorial = true;
             tutorialStep = 0;
+            boardSize = 4; // 教學模式固定 4x4
+            hideAllGameElements(); // 隱藏所有遊戲相關元素
             difficultySelection.style.display = 'none'; // 隱藏難度選擇
             scoreBoard.style.display = 'block'; // 顯示分數板
             gameBoard.style.display = 'grid'; // 顯示遊戲板
-            gameBoard.style.gridTemplateColumns = `repeat(4, 100px)`; // 教學模式固定 4x4 網格
-            gameBoard.style.gridGap = '10px'; // 網格間距
             homeButton.style.display = 'block'; // 顯示回到主頁按鈕
-            initGame(); // 先初始化遊戲板的空方塊，再加載教學步驟的內容
+
+            // 設定 CSS 變數來調整方塊大小和間距，以適應不同尺寸的板面
+            // 教學模式固定為 4x4，因此 tile 大小和 gridGap 固定
+            gameBoard.style.setProperty('--board-size', boardSize);
+            // 讓單個方塊的尺寸適應螢幕寬度，留下一些邊距
+            // 4x4 板面：總寬度 (100vw - 40px margin) / (4個方塊 + 5個間距)
+            const tileCalcSize = `calc((100vw - 40px - (var(--grid-gap) * ${boardSize + 1})) / ${boardSize})`;
+            gameBoard.style.setProperty('--tile-size', `min(100px, ${tileCalcSize})`); // 限制最大 100px
+            gameBoard.style.setProperty('--grid-gap', '10px'); // 固定間距
+            gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, var(--tile-size))`; // 網格列數
+
+            initGame(); // 先初始化遊戲板的空方塊
             loadTutorialStep(); // 加載教學模式的第一步
+            gameActive = true; // 遊戲開始，可以滑動
         }
 
         /**
@@ -228,24 +365,26 @@
          */
         function loadTutorialStep() {
             const step = tutorialSteps[tutorialStep]; // 取得當前教學步驟的資料
-            boardSize = 4; // 教學模式限定 4x4
             board = JSON.parse(JSON.stringify(step.board)); // 深拷貝教學板狀態到當前遊戲板
             score = 0; // 分數歸零
             updateScore(0); // 更新分數顯示
-            // gameBoard.innerHTML = ''; // 在 initGame 已經清空並創建，這裡不需要重複
             updateBoard(); // 更新遊戲板的視覺狀態
-            showMessage(step.message); // 顯示當前步驟的提示訊息
-            // 隱藏重新開始按鈕，直到教學結束或遊戲結束
-            gameOverDisplay.querySelector('button').style.display = 'none';
+            showMessage(step.message, false); // 顯示當前步驟的提示訊息，不顯示 Restart 按鈕
         }
 
         /**
          * 顯示遊戲結束或勝利訊息。
          * @param {string} msg - 要顯示的訊息。
+         * @param {boolean} showRestartButton - 是否顯示 Restart 按鈕。
          */
-        function showMessage(msg) {
+        function showMessage(msg, showRestartButton = true) {
             gameOverDisplay.style.display = 'block'; // 顯示遊戲結束畫面
-            gameOverDisplay.querySelector('p').textContent = msg; // 更新訊息文字
+            gameOverMessage.textContent = msg; // 更新訊息文字
+            if (showRestartButton) {
+                gameOverDisplay.querySelector('button').style.display = 'inline-block';
+            } else {
+                gameOverDisplay.querySelector('button').style.display = 'none';
+            }
         }
 
         /**
@@ -255,14 +394,23 @@
         function setBoardSize(size) {
             boardSize = size;
             isTutorial = false; // 退出教學模式
+            hideAllGameElements(); // 隱藏所有遊戲相關元素
             difficultySelection.style.display = 'none'; // 隱藏難度選擇
             scoreBoard.style.display = 'block'; // 顯示分數板
             gameBoard.style.display = 'grid'; // 顯示遊戲板
-            // 根據選定的尺寸設定網格列數
-            gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, 100px)`;
-            gameBoard.style.gridGap = '10px'; // 網格間距
             homeButton.style.display = 'block'; // 顯示回到主頁按鈕
+
+            // 關鍵修正：動態設定 CSS 變數以適應不同尺寸的板面
+            gameBoard.style.setProperty('--board-size', boardSize);
+            // 讓單個方塊的尺寸適應螢幕寬度，留下一些邊距
+            // 總寬度 (100vw - 40px body margin) / (方塊數量 + 間距數量)
+            const tileCalcSize = `calc((100vw - 40px - (var(--grid-gap) * ${boardSize + 1})) / ${boardSize})`;
+            gameBoard.style.setProperty('--tile-size', `min(100px, ${tileCalcSize})`); // 限制最大 100px
+            gameBoard.style.setProperty('--grid-gap', '10px'); // 間距固定為 10px
+            gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, var(--tile-size))`; // 設定網格列數
+
             initGame(); // 初始化遊戲
+            gameActive = true; // 遊戲開始，可以滑動
         }
 
         /**
@@ -273,6 +421,7 @@
             score = 0; // 分數歸零
             updateScore(0); // 更新分數顯示
             gameOverDisplay.style.display = 'none'; // 隱藏遊戲結束畫面
+            gameActive = true; // 遊戲開始，設定為活躍狀態
             // 初始化一個填充 0 的二維陣列作為遊戲板
             board = Array.from({ length: boardSize }, () => Array(boardSize).fill(0));
             gameBoard.innerHTML = ''; // 清空遊戲板上的所有方塊
@@ -286,8 +435,11 @@
                     gameBoard.appendChild(tile);
                 }
             }
-            addRandomTile(); // 添加第一個隨機方塊
-            addRandomTile(); // 添加第二個隨機方塊
+            // 非教學模式才自動生成方塊，教學模式由 loadTutorialStep 載入指定板面
+            if (!isTutorial) {
+                addRandomTile(); // 添加第一個隨機方塊
+                addRandomTile(); // 添加第二個隨機方塊
+            }
             updateBoard(); // 更新遊戲板的視覺狀態
         }
 
@@ -342,29 +494,29 @@
 
         /**
          * 將一行 (或列) 中的非零數字滑動到一側，並用零填充空位。
-         * @param {Array<number>} row - 要處理的一行或一列數字。
+         * @param {Array<number>} line - 要處理的一行或一列數字。
          * @returns {Array<number>} - 滑動後的數字陣列。
          */
-        function slide(row) {
-            const filtered = row.filter(val => val); // 過濾掉所有 0
-            const zeros = Array(row.length - filtered.length).fill(0); // 根據原始長度計算需要補充的 0 數量
+        function slide(line) {
+            const filtered = line.filter(val => val !== 0); // 過濾掉所有 0
+            const zeros = Array(line.length - filtered.length).fill(0); // 根據原始長度計算需要補充的 0 數量
             return [...filtered, ...zeros]; // 將非零數字和 0 合併
         }
 
         /**
          * 合併一行 (或列) 中相鄰且相同數值的方塊。
-         * @param {Array<number>} row - 要處理的一行或一列數字。
+         * @param {Array<number>} line - 要處理的一行或一列數字。
          * @returns {Array<number>} - 合併後的數字陣列。
          */
-        function combine(row) {
-            for (let i = 0; i < row.length - 1; i++) {
-                if (row[i] !== 0 && row[i] === row[i + 1]) { // 如果當前和下一個方塊相同且不為 0
-                    row[i] *= 2; // 當前方塊數值翻倍
-                    updateScore(row[i]); // <--- 這裡就是計分的地方！將新生成的方塊數值加到總分
-                    row[i + 1] = 0; // 下一個方塊歸零 (被合併)
+        function combine(line) {
+            for (let i = 0; i < line.length - 1; i++) {
+                if (line[i] !== 0 && line[i] === line[i + 1]) { // 如果當前和下一個方塊相同且不為 0
+                    line[i] *= 2; // 當前方塊數值翻倍
+                    updateScore(line[i]); // 將新生成的方塊數值加到總分
+                    line[i + 1] = 0; // 下一個方塊歸零 (被合併)
                 }
             }
-            return row; // 返回處理後的行
+            return line; // 返回處理後的行
         }
 
         /**
@@ -373,6 +525,11 @@
          * @param {string} direction - 移動方向 ('left', 'right', 'up', 'down')。
          */
         function move(direction) {
+            // 如果遊戲不在活躍狀態 (已結束或勝利)，則不允許滑動
+            if (!gameActive) {
+                return;
+            }
+
             // 如果是教學模式，檢查玩家的移動是否符合預期
             if (isTutorial) {
                 const step = tutorialSteps[tutorialStep];
@@ -428,25 +585,26 @@
                         // 稍微延遲，讓玩家看到合併效果後再加載下一步
                         setTimeout(loadTutorialStep, 500);
                     } else {
-                        // 教學結束
-                        showMessage('完美收工 🎉 你已經學會2048怎麼玩了！');
-                        // 顯示重新開始按鈕，並確保其綁定 restartGame
-                        gameOverDisplay.querySelector('button').style.display = 'inline-block';
-                        gameOverDisplay.querySelector('button').onclick = restartGame;
-                        isTutorial = false; // 退出教學模式
+                        // 教學結束後自動返回主頁
+                        gameActive = false; // 教學結束，停止遊戲活躍
+                        showMessage('完美收工 🎉 你已經學會2048怎麼玩了！', false); // 顯示訊息，不顯示 Restart
+                        // 延遲後返回主頁
+                        setTimeout(() => {
+                            goHome();
+                            alert('現在你可以選擇難度開始自己的遊戲囉！');
+                        }, 2000); // 2 秒後返回主頁
                     }
                 } else {
                     // 一般遊戲模式
                     addRandomTile(); // 添加一個新的隨機方塊
                     updateBoard(); // 更新 UI
+
                     if (checkWin()) { // 檢查是否達到 2048 勝利
-                        showMessage('你贏了幹！🎉🎉');
-                        gameOverDisplay.querySelector('button').style.display = 'inline-block';
-                        gameOverDisplay.querySelector('button').onclick = restartGame;
+                        gameActive = false; // 遊戲勝利，停止遊戲活躍
+                        showMessage('你贏了幹！🎉🎉', true); // 顯示勝利訊息並顯示 Restart 按鈕
                     } else if (isGameOver()) { // 檢查遊戲是否結束
-                        gameOverDisplay.style.display = 'block';
-                        gameOverDisplay.querySelector('button').style.display = 'inline-block';
-                        gameOverDisplay.querySelector('button').onclick = restartGame;
+                        gameActive = false; // 遊戲結束，停止遊戲活躍
+                        showMessage('Game Over!', true); // 顯示 Game Over 訊息並顯示 Restart 按鈕
                     }
                 }
             }
@@ -482,17 +640,28 @@
          */
         function goHome() {
             isTutorial = false; // 確保退出教學模式
+            gameActive = false; // 遊戲非活躍
+            hideAllGameElements(); // 隱藏所有遊戲相關元素
+            difficultySelection.style.display = 'flex'; // 顯示難度選擇
+        }
+
+        /**
+         * 隱藏所有遊戲相關的顯示元素，用於切換模式時的清理。
+         */
+        function hideAllGameElements() {
             gameOverDisplay.style.display = 'none'; // 隱藏遊戲結束/勝利訊息
             scoreBoard.style.display = 'none'; // 隱藏分數板
             gameBoard.style.display = 'none'; // 隱藏遊戲板
             homeButton.style.display = 'none'; // 隱藏回到主頁按鈕
-            difficultySelection.style.display = 'flex'; // 顯示難度選擇
         }
 
         /* 事件監聽器 */
 
         // 鍵盤控制 (箭頭鍵)
         document.addEventListener('keydown', e => {
+            // 只有當遊戲活躍時才響應鍵盤操作
+            if (!gameActive) return;
+
             // 檢查是否為方向鍵
             if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
                 e.preventDefault(); // 防止頁面滾動 (當使用方向鍵時)
@@ -522,6 +691,9 @@
         // 使用 { passive: true } 可以在這裡不阻止預設行為，優化滾動性能。
         // 這樣外部按鈕的點擊不會被 gameBoard 的 touchstart 影響。
         gameBoard.addEventListener('touchstart', function(e) {
+            // 只有當遊戲活躍時才處理觸控開始
+            if (!gameActive) return;
+
             touchStartX = e.touches[0].clientX; // 記錄觸摸開始的 X 座標
             touchStartY = e.touches[0].clientY; // 記錄觸摸開始的 Y 座標
             touchMoved = false; // 每次觸摸開始時重置為 false
@@ -531,6 +703,9 @@
         // passive: false 是必要的，因為我們在這裡呼叫了 preventDefault()，
         // 以確保只有在遊戲板內滑動時才阻止頁面滾動，而不影響其他區域。
         gameBoard.addEventListener('touchmove', function(e) {
+            // 只有當遊戲活躍時才處理觸控移動
+            if (!gameActive) return;
+
             const dx = e.touches[0].clientX - touchStartX;
             const dy = e.touches[0].clientY - touchStartY;
             const minMoveThreshold = 10; // 定義一個小閾值 (例如 10 像素)，超過即視為移動
@@ -546,6 +721,9 @@
         // 這樣遊戲板上的按鈕（如 Restart）可以正常點擊。
         // passive: true 確保按鈕點擊事件不會被這個監聽器阻塞。
         gameBoard.addEventListener('touchend', function(e) {
+            // 只有當遊戲活躍時才處理觸控結束
+            if (!gameActive) return;
+
             // 如果沒有偵測到明顯的滑動 (即 touchMoved 仍為 false)，
             // 則認為這是一次點擊操作，不執行遊戲移動邏輯。
             // 這也確保了遊戲結束後的 "Restart" 按鈕在手機上可以正常點擊。
@@ -566,7 +744,6 @@
                 else move('up'); // 向上滑動
             }
             // 不需要在這裡再次呼叫 e.preventDefault()，因為 touchmove 已經處理過了頁面滾動。
-            // 這樣按鈕的點擊事件就可以正常觸發。
         }, { passive: true });
         // --- 觸控事件優化結束 ---
 
@@ -585,7 +762,5 @@
             return false; // 未找到 2048 方塊
         }
     </script>
-    <a id="feedback" href="https://mail.google.com/mail/?view=cm&fs=1&to=hsc0529.myself.tw@gmail.com" target="_blank">意見反饋</a>
-
 </body>
 </html>
