@@ -33,13 +33,45 @@
                 overflow-x: hidden; /* 水平方向不允許滾動，避免不必要的橫向滾動條 */
             }
         }
-        /* 分數板樣式 */
-        #score-board {
-            margin-bottom: 20px; /* 下方間距 */
-            font-size: 24px; /* 字體大小 */
-            font-weight: bold; /* 字體粗細 */
-            color: #776e65; /* 字體顏色 */
+        /* 分數板容器樣式 */
+        #game-info {
+            display: flex;
+            justify-content: center; /* 分數居中 */
+            align-items: center;
+            width: calc(var(--tile-size) * var(--board-size) + var(--grid-gap) * (var(--board-size) - 1) + 20px); /* 與遊戲板寬度一致 */
+            max-width: 500px; /* 限制最大寬度 */
+            margin-bottom: 20px;
+            padding: 0 10px; /* 左右內邊距 */
         }
+
+        #score-board {
+            font-size: 24px;
+            font-weight: bold;
+            color: #776e65;
+            background-color: #eee4da;
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+        /* 計時器顯示區樣式 (在遊戲板下方) */
+        #timer-display-container {
+            display: none; /* 預設隱藏 */
+            width: calc(var(--tile-size) * var(--board-size) + var(--grid-gap) * (var(--board-size) - 1) + 20px); /* 與遊戲板寬度一致 */
+            max-width: 500px; /* 限制最大寬度 */
+            margin-top: 20px; /* 與遊戲板的間距 */
+            text-align: center;
+        }
+
+        #timer-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #776e65;
+            background-color: #eee4da;
+            padding: 10px 15px;
+            border-radius: 8px;
+            display: inline-block; /* 讓背景框只包住內容 */
+        }
+
+
         /* 遊戲板樣式 */
         #game-board {
             display: grid; /* 使用 Grid 佈局 */
@@ -172,7 +204,7 @@
             right: 20px; /* 距離右側 20px */
             background-color: #8f7a66; /* 背景顏色 */
             color: #fff; /* 字體顏色 */
-            padding: 10px 15px; /* 內邊距 */
+            padding: 10px 15px;
             border-radius: 8px; /* 圓角 */
             font-weight: bold; /* 字體粗細 */
             text-decoration: none; /* 無下劃線 */
@@ -216,6 +248,105 @@
         #feedback-options button:hover {
             background-color: #776e65;
         }
+
+        /* 新增：暫停按鈕樣式 */
+        #pause-button {
+            position: fixed; /* 固定定位 */
+            top: 20px; /* 距離頂部 20px */
+            right: 20px; /* 距離右側 20px */
+            background-color: #5cb85c; /* 綠色 */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            transition: background-color 0.3s;
+            z-index: 7; /* 在意見反饋之上 */
+            display: none; /* 預設隱藏 */
+        }
+        #pause-button:hover {
+            background-color: #4cae4c;
+        }
+        #pause-button.paused {
+            background-color: #f0ad4e; /* 暫停時改為橘色 */
+        }
+        #pause-button.paused:hover {
+            background-color: #eea236;
+        }
+
+        /* 新增：嘴砲開關樣式 */
+        #roast-mode-toggle-container {
+            display: flex;
+            align-items: center;
+            margin-top: 20px; /* 與上方按鈕保持距離 */
+            background-color: #f5f5f5;
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+
+        #roast-mode-toggle-container label {
+            font-size: 16px;
+            color: #776e65;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        #roast-mode-toggle {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 24px;
+        }
+
+        #roast-mode-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* Slider */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #8f7a66; /* 開啟時顏色 */
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #8f7a66;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(16px);
+            -ms-transform: translateX(16px);
+            transform: translateX(16px);
+        }
     </style>
 </head>
 <body>
@@ -226,9 +357,25 @@
         <button onclick="setBoardSize(5)">5x5</button>
         <button onclick="setBoardSize(6)">6x6</button>
         <button onclick="setBoardSize(7)">7x7</button>
+        <div id="roast-mode-toggle-container">
+            <label for="roast-mode-checkbox">嘴砲開關</label>
+            <label class="switch" id="roast-mode-toggle">
+                <input type="checkbox" id="roast-mode-checkbox" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
     </div>
-    <div id="score-board" style="display: none;">Score: <span id="score">0</span></div>
+
+    <div id="game-info" style="display: none;">
+        <div id="score-board">Score: <span id="score">0</span></div>
+    </div>
+
     <div id="game-board" style="display: none;"></div>
+
+    <div id="timer-display-container" style="display: none;">
+        <div id="timer-display">Time: <span id="time">00:00</span></div>
+    </div>
+
     <div id="game-over" style="display: none;">
         <p id="game-over-message">Game Over!</p>
         <button onclick="restartGame()">Restart</button>
@@ -242,6 +389,8 @@
         <button id="feedback-app">已安裝 Gmail 程式 (手機點這個)</button>
     </div>
 
+    <button id="pause-button" style="display: none;">暫停</button>
+
     <script>
         /* 全域變數 */
         let boardSize = 4; // 遊戲板的尺寸 (例如 4x4, 5x5)
@@ -250,6 +399,12 @@
         let isTutorial = false; // 是否處於教學模式
         let tutorialStep = 0; // 教學模式的步驟
         let gameActive = false; // 新增旗標：遊戲是否活躍 (可以滑動)
+        let timerId = null; // 計時器 ID
+        let totalSeconds = 0; // 總秒數
+        let isPaused = false; // 遊戲是否暫停
+
+        // 嘴砲模式開關狀態，從 localStorage 讀取或預設開啟
+        let isRoastModeEnabled = localStorage.getItem('roastMode') === 'disabled' ? false : true;
 
         // 教學模式的步驟定義
         const tutorialSteps = [
@@ -282,23 +437,47 @@
                     [0, 0, 0, 0],
                 ],
                 expectedMove: null // 沒有預期動作，表示教學模式結束
+            },
+            {
+                message: '遊戲開始後，左上角會顯示你的分數，下方則會顯示你所花費的時間喔！好好享受遊戲吧！',
+                board: [ // 可以使用一個基礎板面
+                    [2, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 0, 0],
+                ],
+                expectedMove: null,
+                isInfoStep: true // 標記為資訊步驟
             }
         ];
 
         /* 取得 DOM 元素 */
         const gameBoard = document.getElementById('game-board');
-        const scoreDisplay = document.getElementById('score');
+        const gameInfo = document.getElementById('game-info'); // 新增：取得 game-info 容器
+        const scoreBoard = document.getElementById('score-board'); // 分數板容器
+        const scoreDisplay = document.getElementById('score'); // 分數文字
+        const timerDisplayContainer = document.getElementById('timer-display-container'); // 計時器容器外層
+        const timeDisplay = document.getElementById('time'); // 計時器文字
         const gameOverDisplay = document.getElementById('game-over');
-        const gameOverMessage = document.getElementById('game-over-message'); // 取得訊息元素
+        const gameOverMessage = document.getElementById('game-over-message');
         const difficultySelection = document.getElementById('difficulty-selection');
-        const scoreBoard = document.getElementById('score-board');
-        const homeButton = document.getElementById('home-button'); // 回到主頁按鈕
+        const homeButton = document.getElementById('home-button');
 
-        // 新增：意見反饋相關 DOM 元素
+        // 意見反饋相關 DOM 元素
         const mainFeedbackButton = document.getElementById('main-feedback-button');
         const feedbackOptions = document.getElementById('feedback-options');
         const feedbackWebButton = document.getElementById('feedback-web');
         const feedbackAppButton = document.getElementById('feedback-app');
+
+        // 暫停按鈕 DOM 元素
+        const pauseButton = document.getElementById('pause-button');
+
+        // 嘴砲開關 DOM 元素
+        const roastModeToggleContainer = document.getElementById('roast-mode-toggle-container');
+        const roastModeCheckbox = document.getElementById('roast-mode-checkbox');
+
+        // --- 初始化嘴砲開關狀態 ---
+        roastModeCheckbox.checked = isRoastModeEnabled;
 
         // --- 意見反饋彈出邏輯 ---
         const emailAddress = "hsc0529.myself.tw@gmail.com";
@@ -306,29 +485,85 @@
         const body = "（請在此輸入您的意見或建議）";
 
         mainFeedbackButton.addEventListener('click', () => {
-            // 點擊主按鈕時，切換選項容器的顯示狀態
             feedbackOptions.style.display = feedbackOptions.style.display === 'flex' ? 'none' : 'flex';
         });
 
         feedbackWebButton.addEventListener('click', () => {
-            // 未安裝 Gmail 程式 (電腦點這個) -> 跳轉到網頁版 Gmail
             window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${emailAddress}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
-            feedbackOptions.style.display = 'none'; // 隱藏選項
+            feedbackOptions.style.display = 'none';
         });
 
         feedbackAppButton.addEventListener('click', () => {
-            // 已安裝 Gmail 程式 (手機點這個) -> 嘗試開啟郵件應用程式 (mailto)
             window.location.href = `mailto:${emailAddress}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-            feedbackOptions.style.display = 'none'; // 隱藏選項
+            feedbackOptions.style.display = 'none';
         });
 
         // 點擊選項外部區域時隱藏選項
         document.addEventListener('click', (event) => {
+            // 檢查點擊的目標是否是意見反饋按鈕或選項容器內部
             if (!feedbackOptions.contains(event.target) && event.target !== mainFeedbackButton) {
                 feedbackOptions.style.display = 'none';
             }
         });
         // --- 意見反饋彈出邏輯 END ---
+
+        // --- 暫停/繼續功能邏輯 ---
+        pauseButton.addEventListener('click', togglePause);
+
+        function togglePause() {
+            if (isPaused) {
+                // 從暫停恢復
+                isPaused = false;
+                gameActive = true; // 恢復遊戲操作
+                startTimer(); // 恢復計時
+                pauseButton.textContent = '暫停';
+                pauseButton.classList.remove('paused');
+                // 如果遊戲結束畫面是暫停時顯示的訊息，則隱藏它
+                if (gameOverDisplay.style.display === 'block' && gameOverDisplay.querySelector('button').style.display === 'none') {
+                    gameOverDisplay.style.display = 'none';
+                }
+            } else {
+                // 暫停遊戲
+                isPaused = true;
+                gameActive = false; // 禁止遊戲操作
+                stopTimer(); // 停止計時
+                pauseButton.textContent = '繼續';
+                pauseButton.classList.add('paused');
+                showMessage('遊戲已暫停', false); // 顯示暫停訊息，不顯示 Restart
+            }
+        }
+        // --- 暫停/繼續功能邏輯 END ---
+
+        // --- 計時器功能邏輯 ---
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            const formattedMinutes = String(minutes).padStart(2, '0');
+            const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+            return `${formattedMinutes}:${formattedSeconds}`;
+        }
+
+        function startTimer() {
+            if (timerId) { // 如果已經有計時器在跑，先清除
+                clearInterval(timerId);
+            }
+            timerId = setInterval(() => {
+                totalSeconds++;
+                timeDisplay.textContent = formatTime(totalSeconds);
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerId);
+            timerId = null;
+        }
+
+        function resetTimer() {
+            stopTimer();
+            totalSeconds = 0;
+            timeDisplay.textContent = formatTime(totalSeconds);
+        }
+        // --- 計時器功能邏輯 END ---
 
         /**
          * 啟動教學模式。
@@ -340,23 +575,31 @@
             boardSize = 4; // 教學模式固定 4x4
             hideAllGameElements(); // 隱藏所有遊戲相關元素
             difficultySelection.style.display = 'none'; // 隱藏難度選擇
-            scoreBoard.style.display = 'block'; // 顯示分數板
+            roastModeToggleContainer.style.display = 'none'; // 隱藏嘴砲開關
+
+            // 確保分數板和計時器容器在教學模式顯示
+            gameInfo.style.display = 'flex'; // 顯示分數板容器
+            scoreBoard.style.display = 'block'; // 顯示分數板 (確保它內部是block)
+            timerDisplayContainer.style.display = 'block'; // 顯示計時器容器
+
             gameBoard.style.display = 'grid'; // 顯示遊戲板
             homeButton.style.display = 'block'; // 顯示回到主頁按鈕
+            pauseButton.style.display = 'block'; // 顯示暫停按鈕
 
-            // 設定 CSS 變數來調整方塊大小和間距，以適應不同尺寸的板面
-            // 教學模式固定為 4x4，因此 tile 大小和 gridGap 固定
+            // 設定 CSS 變數來調整方塊大小和間距
             gameBoard.style.setProperty('--board-size', boardSize);
-            // 讓單個方塊的尺寸適應螢幕寬度，留下一些邊距
-            // 4x4 板面：總寬度 (100vw - 40px margin) / (4個方塊 + 5個間距)
             const tileCalcSize = `calc((100vw - 40px - (var(--grid-gap) * ${boardSize + 1})) / ${boardSize})`;
-            gameBoard.style.setProperty('--tile-size', `min(100px, ${tileCalcSize})`); // 限制最大 100px
-            gameBoard.style.setProperty('--grid-gap', '10px'); // 固定間距
-            gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, var(--tile-size))`; // 網格列數
+            gameBoard.style.setProperty('--tile-size', `min(100px, ${tileCalcSize})`);
+            gameBoard.style.setProperty('--grid-gap', '10px');
+            gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, var(--tile-size))`;
 
             initGame(); // 先初始化遊戲板的空方塊
+            resetTimer(); // 重置計時器，但不啟動 (由 loadTutorialStep 決定何時啟動)
             loadTutorialStep(); // 加載教學模式的第一步
-            gameActive = true; // 遊戲開始，可以滑動
+            // gameActive 由 loadTutorialStep 設定，確保資訊步驟不可滑動
+            isPaused = false; // 確保不是暫停狀態
+            pauseButton.textContent = '暫停';
+            pauseButton.classList.remove('paused');
         }
 
         /**
@@ -365,11 +608,46 @@
          */
         function loadTutorialStep() {
             const step = tutorialSteps[tutorialStep]; // 取得當前教學步驟的資料
-            board = JSON.parse(JSON.stringify(step.board)); // 深拷貝教學板狀態到當前遊戲板
-            score = 0; // 分數歸零
-            updateScore(0); // 更新分數顯示
-            updateBoard(); // 更新遊戲板的視覺狀態
-            showMessage(step.message, false); // 顯示當前步驟的提示訊息，不顯示 Restart 按鈕
+
+            if (step.isInfoStep) {
+                // 如果是資訊步驟 (例如計時器介紹)，顯示訊息，不改變板面，不接受滑動
+                showMessage(step.message, false); // 顯示訊息，不顯示 Restart 按鈕
+                gameActive = false; // 資訊步驟時禁止滑動
+                stopTimer(); // 資訊步驟時停止計時
+                pauseButton.style.display = 'none'; // 資訊步驟時暫停按鈕隱藏
+
+                // 延遲後自動進入下一步或結束教學
+                setTimeout(() => {
+                    gameOverDisplay.style.display = 'none'; // 隱藏資訊訊息
+                    tutorialStep++;
+                    if (tutorialStep < tutorialSteps.length) {
+                        loadTutorialStep();
+                    } else {
+                        // 教學結束後自動返回主頁
+                        gameActive = false; // 教學結束，停止遊戲活躍
+                        goHome();
+                        alert('教學完成！現在你可以選擇難度開始自己的遊戲囉！');
+                    }
+                }, 4000); // 4 秒後自動跳轉
+            } else {
+                // 一般教學步驟 (可操作)
+                board = JSON.parse(JSON.stringify(step.board)); // 深拷貝教學板狀態到當前遊戲板
+                score = 0; // 分數歸零 (每個教學步驟從 0 分開始，但實際遊戲模式會累計)
+                updateScore(0); // 更新分數顯示
+                updateBoard(); // 更新遊戲板的視覺狀態
+                showMessage(step.message, false); // 顯示當前步驟的提示訊息，不顯示 Restart 按鈕
+                gameActive = true; // 允許滑動
+                // 教學模式中，只有在實際遊戲步驟才啟動計時
+                if (tutorialStep === 0) { // 假設第一個可操作步驟開始計時
+                   startTimer();
+                } else {
+                    // 如果不是第一個可操作步驟，且之前有停過，就繼續計時
+                    if (!timerId) { // 如果計時器沒在跑
+                        startTimer();
+                    }
+                }
+                pauseButton.style.display = 'block'; // 顯示暫停按鈕
+            }
         }
 
         /**
@@ -396,21 +674,31 @@
             isTutorial = false; // 退出教學模式
             hideAllGameElements(); // 隱藏所有遊戲相關元素
             difficultySelection.style.display = 'none'; // 隱藏難度選擇
-            scoreBoard.style.display = 'block'; // 顯示分數板
+            roastModeToggleContainer.style.display = 'none'; // 隱藏嘴砲開關
+
+            // 確保分數板和計時器容器在遊戲模式顯示
+            gameInfo.style.display = 'flex'; // 顯示分數板容器
+            scoreBoard.style.display = 'block'; // 顯示分數板 (確保它內部是block)
+            timerDisplayContainer.style.display = 'block'; // 顯示計時器容器
+
             gameBoard.style.display = 'grid'; // 顯示遊戲板
             homeButton.style.display = 'block'; // 顯示回到主頁按鈕
+            pauseButton.style.display = 'block'; // 顯示暫停按鈕
 
             // 關鍵修正：動態設定 CSS 變數以適應不同尺寸的板面
             gameBoard.style.setProperty('--board-size', boardSize);
-            // 讓單個方塊的尺寸適應螢幕寬度，留下一些邊距
-            // 總寬度 (100vw - 40px body margin) / (方塊數量 + 間距數量)
             const tileCalcSize = `calc((100vw - 40px - (var(--grid-gap) * ${boardSize + 1})) / ${boardSize})`;
-            gameBoard.style.setProperty('--tile-size', `min(100px, ${tileCalcSize})`); // 限制最大 100px
-            gameBoard.style.setProperty('--grid-gap', '10px'); // 間距固定為 10px
-            gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, var(--tile-size))`; // 設定網格列數
+            gameBoard.style.setProperty('--tile-size', `min(100px, ${tileCalcSize})`);
+            gameBoard.style.setProperty('--grid-gap', '10px');
+            gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, var(--tile-size))`;
 
             initGame(); // 初始化遊戲
+            resetTimer(); // 重置計時器
+            startTimer(); // 開始計時
             gameActive = true; // 遊戲開始，可以滑動
+            isPaused = false; // 確保不是暫停狀態
+            pauseButton.textContent = '暫停';
+            pauseButton.classList.remove('paused');
         }
 
         /**
@@ -422,6 +710,10 @@
             updateScore(0); // 更新分數顯示
             gameOverDisplay.style.display = 'none'; // 隱藏遊戲結束畫面
             gameActive = true; // 遊戲開始，設定為活躍狀態
+            isPaused = false; // 確保不是暫停狀態
+            pauseButton.textContent = '暫停';
+            pauseButton.classList.remove('paused');
+
             // 初始化一個填充 0 的二維陣列作為遊戲板
             board = Array.from({ length: boardSize }, () => Array(boardSize).fill(0));
             gameBoard.innerHTML = ''; // 清空遊戲板上的所有方塊
@@ -525,8 +817,8 @@
          * @param {string} direction - 移動方向 ('left', 'right', 'up', 'down')。
          */
         function move(direction) {
-            // 如果遊戲不在活躍狀態 (已結束或勝利)，則不允許滑動
-            if (!gameActive) {
+            // 如果遊戲不在活躍狀態 (已結束或勝利) 或暫停狀態，則不允許滑動
+            if (!gameActive || isPaused) {
                 return;
             }
 
@@ -534,7 +826,7 @@
             if (isTutorial) {
                 const step = tutorialSteps[tutorialStep];
                 if (step.expectedMove && direction !== step.expectedMove) { // 如果有預期動作且方向不符
-                    alert('錯了喔！這步要往「' + step.expectedMove + '」才對，照提示做啦！');
+                    alert('錯了喔！這步要往「' + (step.expectedMove === 'left' ? '左' : step.expectedMove === 'right' ? '右' : step.expectedMove === 'up' ? '上' : '下') + '」才對，照提示做啦！');
                     return; // 錯誤方向，不執行後續移動邏輯
                 }
             }
@@ -587,12 +879,9 @@
                     } else {
                         // 教學結束後自動返回主頁
                         gameActive = false; // 教學結束，停止遊戲活躍
-                        showMessage('完美收工 🎉 你已經學會2048怎麼玩了！', false); // 顯示訊息，不顯示 Restart
-                        // 延遲後返回主頁
-                        setTimeout(() => {
-                            goHome();
-                            alert('現在你可以選擇難度開始自己的遊戲囉！');
-                        }, 2000); // 2 秒後返回主頁
+                        stopTimer(); // 停止計時
+                        goHome();
+                        alert('教學完成！現在你可以選擇難度開始自己的遊戲囉！');
                     }
                 } else {
                     // 一般遊戲模式
@@ -601,14 +890,44 @@
 
                     if (checkWin()) { // 檢查是否達到 2048 勝利
                         gameActive = false; // 遊戲勝利，停止遊戲活躍
-                        showMessage('你贏了幹！🎉🎉', true); // 顯示勝利訊息並顯示 Restart 按鈕
+                        stopTimer(); // 停止計時
+                        displayWinMessage(); // 顯示勝利訊息
                     } else if (isGameOver()) { // 檢查遊戲是否結束
                         gameActive = false; // 遊戲結束，停止遊戲活躍
-                        showMessage('Game Over!', true); // 顯示 Game Over 訊息並顯示 Restart 按鈕
+                        stopTimer(); // 停止計時
+                        displayGameOverMessage(); // 顯示 Game Over 訊息
                     }
                 }
             }
         }
+
+        /**
+         * 顯示遊戲結束訊息 (根據嘴砲開關)。
+         */
+        function displayGameOverMessage() {
+            let message;
+            if (isRoastModeEnabled) {
+                message = `你怎麼那麼菜，連2048都玩不到`;
+            } else {
+                message = `遊戲結束`;
+            }
+            showMessage(message, true);
+        }
+
+        /**
+         * 顯示遊戲勝利訊息 (根據嘴砲開關)。
+         */
+        function displayWinMessage() {
+            let message;
+            const formattedTime = formatTime(totalSeconds);
+            if (isRoastModeEnabled) {
+                message = `也沒多厲害，還不是花了${formattedTime}才${score}分而已`;
+            } else {
+                message = `恭喜到達2048並且花了${formattedTime}得了${score}分`;
+            }
+            showMessage(message, true);
+        }
+
 
         /**
          * 檢查遊戲是否結束 (沒有可移動的方塊或可合併的方塊)。
@@ -632,7 +951,10 @@
          */
         function restartGame() {
             initGame(); // 重新初始化遊戲
-            gameOverDisplay.querySelector('button').onclick = restartGame; // 確保按鈕重新綁定
+            resetTimer(); // 重置計時器
+            startTimer(); // 開始計時
+            // 確保按鈕重新綁定， although click listener is already setup once
+            gameOverDisplay.querySelector('button').onclick = restartGame;
         }
 
         /**
@@ -641,8 +963,14 @@
         function goHome() {
             isTutorial = false; // 確保退出教學模式
             gameActive = false; // 遊戲非活躍
+            isPaused = false; // 確保退出暫停狀態
+            stopTimer(); // 停止計時
+            pauseButton.textContent = '暫停'; // 重設暫停按鈕文字
+            pauseButton.classList.remove('paused'); // 移除暫停樣式
+
             hideAllGameElements(); // 隱藏所有遊戲相關元素
             difficultySelection.style.display = 'flex'; // 顯示難度選擇
+            roastModeToggleContainer.style.display = 'flex'; // 顯示嘴砲開關
         }
 
         /**
@@ -650,17 +978,19 @@
          */
         function hideAllGameElements() {
             gameOverDisplay.style.display = 'none'; // 隱藏遊戲結束/勝利訊息
-            scoreBoard.style.display = 'none'; // 隱藏分數板
+            gameInfo.style.display = 'none'; // 隱藏分數板容器
+            timerDisplayContainer.style.display = 'none'; // 隱藏計時器容器
             gameBoard.style.display = 'none'; // 隱藏遊戲板
             homeButton.style.display = 'none'; // 隱藏回到主頁按鈕
+            pauseButton.style.display = 'none'; // 隱藏暫停按鈕
         }
 
         /* 事件監聽器 */
 
         // 鍵盤控制 (箭頭鍵)
         document.addEventListener('keydown', e => {
-            // 只有當遊戲活躍時才響應鍵盤操作
-            if (!gameActive) return;
+            // 只有當遊戲活躍且未暫停時才響應鍵盤操作
+            if (!gameActive || isPaused) return;
 
             // 檢查是否為方向鍵
             if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
@@ -688,11 +1018,9 @@
         let touchMoved = false; // 旗標，追蹤在遊戲板內是否有實際滑動
 
         // 監聽遊戲板的 touchstart 事件：記錄起始座標，並重置 touchMoved 旗標。
-        // 使用 { passive: true } 可以在這裡不阻止預設行為，優化滾動性能。
-        // 這樣外部按鈕的點擊不會被 gameBoard 的 touchstart 影響。
         gameBoard.addEventListener('touchstart', function(e) {
-            // 只有當遊戲活躍時才處理觸控開始
-            if (!gameActive) return;
+            // 只有當遊戲活躍且未暫停時才處理觸控開始
+            if (!gameActive || isPaused) return;
 
             touchStartX = e.touches[0].clientX; // 記錄觸摸開始的 X 座標
             touchStartY = e.touches[0].clientY; // 記錄觸摸開始的 Y 座標
@@ -700,11 +1028,9 @@
         }, { passive: true });
 
         // 監聽遊戲板的 touchmove 事件：判斷是否有足夠的移動量，並在移動時阻止頁面滾動。
-        // passive: false 是必要的，因為我們在這裡呼叫了 preventDefault()，
-        // 以確保只有在遊戲板內滑動時才阻止頁面滾動，而不影響其他區域。
         gameBoard.addEventListener('touchmove', function(e) {
-            // 只有當遊戲活躍時才處理觸控移動
-            if (!gameActive) return;
+            // 只有當遊戲活躍且未暫停時才處理觸控移動
+            if (!gameActive || isPaused) return;
 
             const dx = e.touches[0].clientX - touchStartX;
             const dy = e.touches[0].clientY - touchStartY;
@@ -717,16 +1043,12 @@
         }, { passive: false });
 
         // 監聽遊戲板的 touchend 事件：根據是否有滑動來執行遊戲邏輯。
-        // 如果沒有滑動（視為點擊），則不執行遊戲邏輯，讓事件繼續傳播，
-        // 這樣遊戲板上的按鈕（如 Restart）可以正常點擊。
-        // passive: true 確保按鈕點擊事件不會被這個監聽器阻塞。
         gameBoard.addEventListener('touchend', function(e) {
-            // 只有當遊戲活躍時才處理觸控結束
-            if (!gameActive) return;
+            // 只有當遊戲活躍且未暫停時才處理觸控結束
+            if (!gameActive || isPaused) return;
 
             // 如果沒有偵測到明顯的滑動 (即 touchMoved 仍為 false)，
             // 則認為這是一次點擊操作，不執行遊戲移動邏輯。
-            // 這也確保了遊戲結束後的 "Restart" 按鈕在手機上可以正常點擊。
             if (!touchMoved) {
                 return; // 不執行遊戲移動邏輯
             }
@@ -743,7 +1065,6 @@
                 if (dy > 0) move('down'); // 向下滑動
                 else move('up'); // 向上滑動
             }
-            // 不需要在這裡再次呼叫 e.preventDefault()，因為 touchmove 已經處理過了頁面滾動。
         }, { passive: true });
         // --- 觸控事件優化結束 ---
 
@@ -761,6 +1082,14 @@
             }
             return false; // 未找到 2048 方塊
         }
+
+        // --- 嘴砲開關邏輯 ---
+        roastModeCheckbox.addEventListener('change', () => {
+            isRoastModeEnabled = roastModeCheckbox.checked;
+            // 將狀態儲存到 localStorage，讓下次載入時也能保持
+            localStorage.setItem('roastMode', isRoastModeEnabled ? 'enabled' : 'disabled');
+        });
+
     </script>
 </body>
 </html>
