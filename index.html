@@ -63,7 +63,7 @@
             color: #f9f6f2;
             background-color: #8f7a66;
             border: none;
-            border-radius: 8_px;
+            border-radius: 8px;
             cursor: pointer;
             margin-top: 10px; /* 調整與上方元素的間距 */
             transition: background-color 0.3s;
@@ -371,10 +371,323 @@
             -ms-transform: translateX(16px);
             transform: translateX(16px);
         }
+
+        /* --- 新增的認證相關 CSS --- */
+        #auth-header-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #f9f6f2;
+            background-color: #8f7a66;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            z-index: 101; /* 確保在最上層 */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #auth-header-button:hover {
+            background-color: #9f8b7b;
+        }
+
+        #auth-header-button.user-logged-in {
+            background-color: #5cb85c; /* 登入後換個顏色 */
+        }
+        #auth-header-button.user-logged-in:hover {
+            background-color: #4cae4c;
+        }
+
+        /* 認證彈出視窗 */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 200; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center;
+            position: relative;
+        }
+
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .auth-form-container h2, .settings-form-container h2 {
+            color: #776e65;
+            margin-bottom: 20px;
+        }
+
+        .auth-form-container input, .settings-form-container input, .settings-form-container select {
+            width: calc(100% - 20px);
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .auth-form-container button, .settings-form-container button {
+            width: 100%;
+            padding: 12px;
+            background-color: #8f7a66;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .auth-form-container button:hover, .settings-form-container button:hover {
+            background-color: #9f8b7b;
+        }
+
+        #google-signin-btn-modal {
+            background-color: #db4437; /* Google red */
+        }
+
+        #google-signin-btn-modal:hover {
+            background-color: #c33d2e;
+        }
+
+        /* 新增的按鈕組樣式 */
+        .auth-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .auth-options button {
+            width: 100%;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #f9f6f2;
+            background-color: #bbada0;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .auth-options button:hover {
+            background-color: #cdc1b4;
+        }
+
+        /* 表單切換顯示 */
+        #login-form-modal, #register-form-modal, #phone-auth-modal, #account-settings-modal, #main-settings-modal {
+            display: none;
+        }
+
+        /* 登入後用戶資訊和登出按鈕 (在頭部按鈕的下拉菜單) */
+        #user-dropdown {
+            display: none;
+            position: absolute;
+            top: 60px; /* Adjust as needed based on button height */
+            right: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            z-index: 100;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        #user-dropdown p {
+            padding: 10px 15px;
+            margin: 0;
+            color: #776e65;
+            font-weight: bold;
+            border-bottom: 1px solid #eee;
+        }
+
+        #user-dropdown button {
+            width: 100%;
+            padding: 10px 15px;
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        #user-dropdown button:hover {
+            background-color: #c9302c;
+        }
+
+        #user-dropdown #account-settings-btn-dropdown {
+            background-color: #8f7a66; /* Match main auth button style */
+            border-radius: 0;
+            border-bottom: 1px solid #eee;
+        }
+        #user-dropdown #account-settings-btn-dropdown:hover {
+            background-color: #9f8b7b;
+        }
+
+        /* 排行榜彈窗 */
+        #leaderboard-modal .modal-content {
+            max-width: 600px;
+        }
+
+        #leaderboard-modal table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        #leaderboard-modal th, #leaderboard-modal td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            color: #776e65;
+        }
+
+        #leaderboard-modal th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        #leaderboard-modal .sort-buttons button {
+            background-color: #bbada0;
+            margin: 5px;
+            padding: 8px 15px;
+            font-size: 16px;
+            color: #f9f6f2;
+            border-radius: 5px;
+        }
+
+        #leaderboard-modal .sort-buttons button:hover {
+            background-color: #cdc1b4;
+        }
+
+        #user-uid-display {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        /* 主頁設定按鈕 */
+        #main-settings-button {
+            padding: 15px 30px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #f9f6f2;
+            background-color: #8f7a66;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 0;
+            width: 200px;
+            transition: background-color 0.3s;
+        }
+        #main-settings-button:hover {
+            background-color: #9f8b7b;
+        }
+
+        /* Account Settings Modal Specific Styles */
+        #account-settings-modal .modal-content {
+            max-width: 450px;
+        }
+
+        #account-settings-modal label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #776e65;
+            font-size: 16px;
+        }
+
+        #account-settings-modal input, #account-settings-modal select {
+            width: calc(100% - 24px); /* Adjust for padding and border */
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #account-settings-modal button {
+            margin-top: 10px;
+        }
+
+        /* Main Settings Modal Specific Styles */
+        #main-settings-modal .modal-content {
+            max-width: 400px;
+        }
+        #main-settings-modal .settings-option {
+            margin-bottom: 20px;
+        }
+        #main-settings-modal .settings-option label {
+            display: block;
+            text-align: left;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #776e65;
+            font-size: 18px;
+        }
+        #main-settings-modal .settings-option select {
+            width: 100%;
+        }
+
     </style>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics-compat.js"></script>
+
 </head>
 <body>
     <h1>2048 遊戲</h1>
+
+    <div id="auth-header-button">
+        <span id="auth-display-name">登入 / 註冊</span>
+    </div>
+    <div id="user-dropdown">
+        <p>歡迎，<span id="user-email-dropdown"></span>！</p>
+        <button id="account-settings-btn-dropdown">帳戶設定</button>
+        <button id="logout-btn-dropdown">登出</button>
+    </div>
+
 
     <div id="game-info-area" style="display: none;">
         <div id="score-board">分數: <span id="score">0</span></div>
@@ -384,7 +697,7 @@
     </div>
 
     <div id="game-board">
-        </div>
+    </div>
 
     <div id="game-over">
         <p id="game-over-message"></p>
@@ -398,6 +711,8 @@
         <button onclick="setBoardSize(6)">6 x 6</button>
         <button onclick="setBoardSize(7)">7 x 7</button>
         <button onclick="startTutorial()">教學模式</button>
+        <button id="leaderboard-button">排行榜</button>
+        <button id="main-settings-button">設定</button>
     </div>
 
     <button id="home-button" style="display: none;" onclick="goHome()">回到主頁</button>
@@ -418,7 +733,128 @@
         <button id="feedback-app">用郵件應用程式</button>
     </div>
 
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div id="auth-main-options">
+                <h2>帳戶操作</h2>
+                <div class="auth-options">
+                    <button id="show-login-form">登入</button>
+                    <button id="show-register-form">註冊</button>
+                    <button id="phone-auth-button">電話登入 / 註冊</button>
+                    <button id="google-signin-btn-modal">使用 Google 登入</button>
+                </div>
+            </div>
+
+            <div id="login-form-modal" class="auth-form-container">
+                <h2>登入</h2>
+                <input type="email" id="login-email-input" placeholder="電子郵件" required>
+                <input type="password" id="login-password-input" placeholder="密碼" required>
+                <button id="login-btn-modal">登入</button>
+                <button class="back-to-main-auth">返回</button>
+            </div>
+
+            <div id="register-form-modal" class="auth-form-container">
+                <h2>註冊</h2>
+                <input type="email" id="register-email-input" placeholder="電子郵件" required>
+                <input type="password" id="register-password-input" placeholder="密碼" required>
+                <input type="password" id="register-confirm-password-input" placeholder="再次確認密碼" required>
+                <button id="register-btn-modal">註冊</button>
+                <button class="back-to-main-auth">返回</button>
+            </div>
+
+            <div id="phone-auth-modal" class="auth-form-container">
+                <h2>電話登入 / 註冊</h2>
+                <div id="recaptcha-container"></div>
+                <input type="tel" id="phone-number-input" placeholder="輸入電話號碼 (+國碼)" required>
+                <button id="send-otp-button">發送驗證碼</button>
+                <input type="text" id="otp-input" placeholder="輸入驗證碼" style="display:none;">
+                <button id="verify-otp-button" style="display:none;">驗證</button>
+                <input type="text" id="phone-display-name-input" placeholder="輸入你的暱稱" style="display:none;">
+                <button id="set-phone-display-name-button" style="display:none;">設定暱稱</button>
+                <button class="back-to-main-auth">返回</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="leaderboard-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>排行榜</h2>
+            <div class="sort-buttons">
+                <button id="sort-by-score">依分數排名(僅達到2048才會列入)</button>
+                <button id="sort-by-time">依時間排名(僅達到2048才會列入)</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>排名</th>
+                        <th>使用者</th>
+                        <th>國家</th> <th>分數</th>
+                        <th>時間</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard-table-body">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="account-settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>帳戶設定</h2>
+            <label for="settings-display-name">暱稱:</label>
+            <input type="text" id="settings-display-name" placeholder="輸入新暱稱">
+
+            <label for="settings-country">國家:</label>
+            <select id="settings-country">
+                <option value="Taiwan">台灣</option>
+                <option value="USA">美國</option>
+                <option value="Japan">日本</option>
+                <option value="Other">其他</option>
+            </select>
+            <button id="save-account-settings-button">儲存設定</button>
+            <button class="back-to-main-auth">返回</button>
+        </div>
+    </div>
+
+    <div id="main-settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>設定</h2>
+            <div class="settings-option">
+                <label for="language-select">語言:</label>
+                <select id="language-select">
+                    <option value="zh-Hant">繁體中文</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            <button class="back-to-main-auth">返回</button>
+        </div>
+    </div>
+
+    <div id="user-uid-display">
+        </div>
+
+
     <script>
+        // Firebase Configuration - REPLACE WITH YOUR ACTUAL FIREBASE CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyCdbyuB8P-YxX5VHqjsO2w95NfaVkzOTLw",
+            authDomain: "project-2518324333403573393.firebaseapp.com",
+            projectId: "project-2518324333403573393",
+            storageBucket: "project-2518324333403573393.firebasestorage.app",
+            messagingSenderId: "1040297292453",
+            appId: "1:1040297292453:web:6d933a3665aba6ea96934c"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const rtdb = firebase.database(); // Initialize Realtime Database
+
         /* 全域變數 */
         let boardSize = 4; // 遊戲板的尺寸 (例如 4x4, 5x5)
         let board = []; // 遊戲板的二維陣列，儲存方塊數值
@@ -430,6 +866,12 @@
         let timerId = null; // 計時器 ID
         let totalSeconds = 0; // 總秒數
         let isPaused = false; // 遊戲是否暫停
+        let currentUser = null; // 新增：儲存當前登入的用戶
+        let currentLanguage = 'zh-Hant'; // Default language
+
+        // Phone Auth Globals
+        let firebaseRecaptchaVerifier;
+        let confirmationResult;
 
         // 嘴砲模式開關狀態，從 localStorage 讀取或預設開啟
         let isRoastModeEnabled = localStorage.getItem('roastMode') === 'disabled' ? false : true;
@@ -507,6 +949,67 @@
         const roastModeToggleContainer = document.getElementById('roast-mode-toggle-container');
         const roastModeCheckbox = document.getElementById('roast-mode-checkbox');
 
+        // Firebase Auth Modal Elements (新加入或修改的 DOM 元素)
+        const authHeaderButton = document.getElementById('auth-header-button');
+        const authDisplayName = document.getElementById('auth-display-name');
+        const userDropdown = document.getElementById('user-dropdown');
+        const userEmailDropdown = document.getElementById('user-email-dropdown');
+        const accountSettingsBtnDropdown = document.getElementById('account-settings-btn-dropdown'); // 新增帳戶設定按鈕
+        const logoutBtnDropdown = document.getElementById('logout-btn-dropdown');
+
+        const authModal = document.getElementById('auth-modal');
+        const closeModalButton = authModal.querySelector('.close-button');
+        const authMainOptions = document.getElementById('auth-main-options');
+        const showLoginFormBtn = document.getElementById('show-login-form');
+        const showRegisterFormBtn = document.getElementById('show-register-form');
+        const googleSigninBtnModal = document.getElementById('google-signin-btn-modal'); // 彈窗內的 Google 登入按鈕
+        const phoneAuthButton = document.getElementById('phone-auth-button'); // 新增電話登入按鈕
+
+        const loginFormModal = document.getElementById('login-form-modal');
+        const loginEmailInput = document.getElementById('login-email-input');
+        const loginPasswordInput = document.getElementById('login-password-input');
+        const loginBtnModal = document.getElementById('login-btn-modal');
+
+        const registerFormModal = document.getElementById('register-form-modal');
+        const registerEmailInput = document.getElementById('register-email-input');
+        const registerPasswordInput = document.getElementById('register-password-input');
+        const registerConfirmPasswordInput = document.getElementById('register-confirm-password-input');
+        const registerBtnModal = document.getElementById('register-btn-modal');
+
+        const phoneAuthModal = document.getElementById('phone-auth-modal'); // 新增電話認證模態框
+        const recaptchaContainer = document.getElementById('recaptcha-container');
+        const phoneNumberInput = document.getElementById('phone-number-input');
+        const sendOtpButton = document.getElementById('send-otp-button');
+        const otpInput = document.getElementById('otp-input');
+        const verifyOtpButton = document.getElementById('verify-otp-button');
+        const phoneDisplayNameInput = document.getElementById('phone-display-name-input');
+        const setPhoneDisplayNameButton = document.getElementById('set-phone-display-name-button');
+
+
+        const backToMainAuthButtons = document.querySelectorAll('.back-to-main-auth');
+
+        // 排行榜相關 DOM 元素
+        const leaderboardButton = document.getElementById('leaderboard-button');
+        const leaderboardModal = document.getElementById('leaderboard-modal');
+        const leaderboardTableBody = document.getElementById('leaderboard-table-body');
+        const sortbyScoreButton = document.getElementById('sort-by-score');
+        const sortByTimeButton = document.getElementById('sort-by-time');
+
+        // 使用者 UID 顯示
+        const userUidDisplay = document.getElementById('user-uid-display');
+
+        // 帳戶設定相關 DOM 元素
+        const accountSettingsModal = document.getElementById('account-settings-modal');
+        const settingsDisplayNameInput = document.getElementById('settings-display-name');
+        const settingsCountrySelect = document.getElementById('settings-country');
+        const saveAccountSettingsButton = document.getElementById('save-account-settings-button');
+
+        // 主頁設定相關 DOM 元素
+        const mainSettingsButton = document.getElementById('main-settings-button');
+        const mainSettingsModal = document.getElementById('main-settings-modal');
+        const languageSelect = document.getElementById('language-select');
+
+
         // --- 初始化嘴砲開關狀態 ---
         roastModeCheckbox.checked = isRoastModeEnabled;
 
@@ -520,7 +1023,7 @@
         });
 
         feedbackWebButton.addEventListener('click', () => {
-            window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${emailAddress}&su=${encodeURIComponent(subject)}}&body=${encodeURIComponent(body)}`, '_blank');
+            window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${emailAddress}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, '_blank');
             feedbackOptions.style.display = 'none';
         });
 
@@ -563,6 +1066,7 @@
 
         // --- 計時器功能邏輯 ---
         function formatTime(seconds) {
+            if (seconds === null || seconds === undefined) return "--:--"; // Handle null/undefined time for leaderboard
             const minutes = Math.floor(seconds / 60);
             const remainingSeconds = seconds % 60;
             const formattedMinutes = String(minutes).padStart(2, '0');
@@ -592,25 +1096,158 @@
         }
         // --- 計時器功能邏輯 END ---
 
-        // --- 最高分紀錄系統邏輯 ---
-        function loadHighScore() {
-            const storedHighScore = localStorage.getItem('2048_highScore');
-            if (storedHighScore) {
-                highScore = parseInt(storedHighScore);
+        // --- 最高分紀錄系統邏輯 (整合 Firestore 和 localStorage) ---
+        async function loadHighScore() {
+            if (currentUser) {
+                // 從 Firestore 載入最高分
+                try {
+                    const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                    if (userDoc.exists) {
+                        highScore = userDoc.data().highScore || 0;
+                    } else {
+                        // 如果是新用戶，初始化 Firestore 紀錄
+                        await db.collection('users').doc(currentUser.uid).set({
+                            highScore: 0,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            country: "Taiwan" // Set default country for new users
+                        }, { merge: true });
+                        highScore = 0;
+                    }
+                } catch (error) {
+                    console.error("載入 Firestore 最高分失敗:", error);
+                    highScore = 0; // 載入失敗則預設為0
+                }
             } else {
-                highScore = 0;
+                // 從 localStorage 載入最高分 (未登入用戶)
+                const storedHighScore = localStorage.getItem('2048_highScore');
+                if (storedHighScore) {
+                    highScore = parseInt(storedHighScore);
+                } else {
+                    highScore = 0;
+                }
             }
             highScoreDisplay.textContent = highScore;
         }
 
-        function saveHighScore() {
+        async function saveHighScore() {
+            let scoreUpdated = false;
             if (score > highScore) {
                 highScore = score;
+                highScoreDisplay.textContent = highScore; // 即時更新顯示
+                scoreUpdated = true;
+            }
+
+            if (currentUser) {
+                // 儲存到 Firestore
+                try {
+                    await db.collection('users').doc(currentUser.uid).set({
+                        highScore: highScore,
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true }); // 使用 merge 以免覆蓋其他用戶數據
+                    console.log("Firestore 最高分已儲存:", highScore);
+                } catch (error) {
+                    console.error("儲存 Firestore 最高分失敗:", error);
+                }
+            } else if (scoreUpdated) {
+                // 儲存到 localStorage
                 localStorage.setItem('2048_highScore', highScore);
-                highScoreDisplay.textContent = highScore;
+                console.log("localStorage 最高分已儲存:", highScore);
             }
         }
-        // --- 最高分紀錄系統邏輯 END ---
+
+        // --- Leaderboard functionality ---
+        leaderboardButton.addEventListener('click', () => {
+            showLeaderboard('score'); // Default sort by score
+            leaderboardModal.style.display = 'flex';
+        });
+
+        leaderboardModal.querySelector('.close-button').addEventListener('click', () => {
+            leaderboardModal.style.display = 'none';
+        });
+
+        sortbyScoreButton.addEventListener('click', () => showLeaderboard('score'));
+        sortByTimeButton.addEventListener('click', () => showLeaderboard('time'));
+
+        async function showLeaderboard(sortBy = 'score') {
+            const leaderboardData = await fetchLeaderboardData(sortBy);
+            renderLeaderboard(leaderboardData, sortBy);
+        }
+
+        async function fetchLeaderboardData(sortBy) {
+            try {
+                let query = db.collection('leaderboard');
+                if (sortBy === 'score') {
+                    query = query.orderBy('score', 'desc').limit(10);
+                } else { // sortBy === 'time'
+                    query = query.where('reached2048', '==', true).orderBy('timeInSeconds', 'asc').limit(10);
+                }
+
+                const snapshot = await query.get();
+                const data = [];
+                for (const doc of snapshot.docs) {
+                    const entry = doc.data();
+                    let userName = '未知玩家';
+                    let userCountry = 'N/A';
+                    // Try to get display name and country from Firestore 'users' collection
+                    if (entry.userId) {
+                        try {
+                            const userDoc = await db.collection('users').doc(entry.userId).get();
+                            if (userDoc.exists) {
+                                userName = userDoc.data().displayName || userDoc.data().email || userDoc.data().phoneNumber || '匿名玩家';
+                                userCountry = userDoc.data().country || 'N/A';
+                            } else if (entry.userEmail) { // Fallback to email if user doc not found
+                                userName = entry.userEmail.split('@')[0]; // Use part before @
+                            }
+                        } catch (error) {
+                            console.warn("Failed to fetch user info for leaderboard:", error);
+                            if (entry.userEmail) {
+                                userName = entry.userEmail.split('@')[0];
+                            }
+                        }
+                    } else if (entry.userEmail) {
+                        userName = entry.userEmail.split('@')[0];
+                    }
+
+                    data.push({
+                        id: doc.id,
+                        user: userName,
+                        country: userCountry,
+                        score: entry.score,
+                        time: entry.timeInSeconds, // raw seconds
+                        reached2048: entry.reached2048
+                    });
+                }
+                return data;
+            } catch (error) {
+                console.error("Error fetching leaderboard data:", error);
+                return [];
+            }
+        }
+
+        function renderLeaderboard(data, sortBy) {
+            leaderboardTableBody.innerHTML = ''; // Clear existing
+            if (data.length === 0) {
+                leaderboardTableBody.innerHTML = '<tr><td colspan="5">目前沒有排行榜資料。</td></tr>'; // Adjusted colspan
+                return;
+            }
+
+            data.forEach((entry, index) => {
+                const row = leaderboardTableBody.insertRow();
+                const rankCell = row.insertCell();
+                const userCell = row.insertCell();
+                const countryCell = row.insertCell(); // New country cell
+                const scoreCell = row.insertCell();
+                const timeCell = row.insertCell();
+
+                rankCell.textContent = index + 1;
+                userCell.textContent = entry.user;
+                countryCell.textContent = entry.country; // Display country
+                scoreCell.textContent = entry.score;
+                timeCell.textContent = formatTime(entry.time);
+            });
+        }
+        // --- Leaderboard functionality END ---
+
 
         /**
          * 啟動教學模式。
@@ -623,6 +1260,10 @@
             hideAllGameElements(); // 隱藏所有遊戲相關元素
             difficultySelection.style.display = 'none'; // 隱藏難度選擇
             roastModeToggleContainer.style.display = 'none'; // 隱藏嘴砲開關
+            authHeaderButton.style.display = 'none'; // 教學模式隱藏右上角認證按鈕
+            userDropdown.style.display = 'none'; // 確保下拉菜單隱藏
+            userUidDisplay.style.display = 'none'; // 隱藏 UID 顯示
+            mainSettingsButton.style.display = 'none'; // 隱藏主頁設定按鈕
 
             // 確保分數板和計時器容器在教學模式顯示
             gameInfoArea.style.display = 'flex'; // 顯示分數板容器
@@ -636,11 +1277,7 @@
             pauseButton.style.display = 'block'; // 顯示暫停按鈕
 
             // 設定 CSS 變數來調整方塊大小和間距
-            gameBoard.style.setProperty('--board-size', boardSize);
-            const tileCalcSize = `calc((100vw - 40px - (var(--grid-gap) * ${boardSize + 1})) / ${boardSize})`;
-            gameBoard.style.setProperty('--tile-size', `min(100px, ${tileCalcSize})`);
-            gameBoard.style.setProperty('--grid-gap', '10px');
-            gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, var(--tile-size))`;
+            setBoardCSSVariables(boardSize);
 
             initGame(); // 先初始化遊戲板的空方塊 (這也會呼叫 hideMessage())
             resetTimer(); // 重置計時器，但不啟動 (由 loadTutorialStep 決定何時啟動)
@@ -676,7 +1313,7 @@
                         gameActive = false;
                         stopTimer();
                         goHome();
-                        alert('教學完成！現在你可以選擇難度開始自己的遊戲囉！');
+                        alert(getTranslation('tutorial_complete_message')); // 使用多語言訊息
                     }
                 }, 4000); // 4 秒後自動跳轉
             } else {
@@ -744,6 +1381,9 @@
             hideAllGameElements(); // 隱藏所有遊戲相關元素
             difficultySelection.style.display = 'none'; // 隱藏難度選擇
             roastModeToggleContainer.style.display = 'none'; // 隱藏嘴砲開關
+            authHeaderButton.style.display = 'flex'; // 顯示右上角認證按鈕
+            userUidDisplay.style.display = 'block'; // 顯示 UID 顯示
+            mainSettingsButton.style.display = 'none'; // 遊戲開始後隱藏主頁設定按鈕
 
             // 確保分數板和計時器容器在遊戲模式顯示
             gameInfoArea.style.display = 'flex'; // 顯示分數板容器 (更名為 game-info-area)
@@ -757,35 +1397,46 @@
             pauseButton.style.display = 'block'; // 顯示暫停按鈕
 
             // 關鍵修正：動態設定 CSS 變數以適應不同尺寸的板面
-            gameBoard.style.setProperty('--board-size', boardSize);
-            const tileCalcSize = `calc((100vw - 40px - (var(--grid-gap) * ${boardSize + 1})) / ${boardSize})`;
-            gameBoard.style.setProperty('--tile-size', `min(100px, ${tileCalcSize})`);
-            gameBoard.style.setProperty('--grid-gap', '10px');
-            gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, var(--tile-size))`;
+            setBoardCSSVariables(boardSize);
 
             initGame(); // 初始化遊戲
             resetTimer(); // 重置計時器
             startTimer(); // 開始計時
             gameActive = true; // 遊戲開始，可以滑動
             isPaused = false; // 確保不是暫停狀態
-            pauseButton.textContent = '暫停';
+            pauseButton.textContent = getTranslation('pause'); // 使用多語言
             pauseButton.classList.remove('paused');
+        }
+
+        /**
+         * 動態設定遊戲板相關的 CSS 變數。
+         * @param {number} size - 遊戲板的尺寸。
+         */
+        function setBoardCSSVariables(size) {
+            gameBoard.style.setProperty('--board-size', size);
+            // 根據螢幕寬度調整方塊大小，使其在不同設備上顯示良好
+            // 40px 是 body 的左右 padding 總和 (20px + 20px)
+            // var(--grid-gap) * (boardSize + 1) 是所有間距的總和
+            const tileCalcSize = `calc((100vw - 40px - (var(--grid-gap) * ${size + 1})) / ${size})`;
+            gameBoard.style.setProperty('--tile-size', `min(100px, ${tileCalcSize})`);
+            gameBoard.style.setProperty('--grid-gap', '10px'); // 保持間距為 10px
+            gameBoard.style.gridTemplateColumns = `repeat(${size}, var(--tile-size))`;
         }
 
         /**
          * 初始化遊戲。
          * 重置分數、遊戲板，並生成兩個初始方塊。
          */
-        function initGame() {
+        async function initGame() {
             score = 0;
             updateScore(0);
             hideMessage(); // 隱藏遊戲結束畫面 (如果有顯示的話)
             gameActive = true; // 遊戲開始，設定為活躍狀態
             isPaused = false;
-            pauseButton.textContent = '暫停';
+            pauseButton.textContent = getTranslation('pause'); // 使用多語言
             pauseButton.classList.remove('paused');
 
-            loadHighScore();
+            await loadHighScore(); // 在初始化遊戲時載入最高分
 
             board = Array.from({ length: boardSize }, () => Array(boardSize).fill(0));
             gameBoard.innerHTML = '';
@@ -882,7 +1533,7 @@
          * 根據指定方向滑動和合併方塊，並在移動後添加新方塊（非教學模式）。
          * @param {string} direction - 移動方向 ('left', 'right', 'up', 'down')。
          */
-        function move(direction) {
+        async function move(direction) {
             if (!gameActive || isPaused) {
                 return;
             }
@@ -890,7 +1541,7 @@
             if (isTutorial) {
                 const step = tutorialSteps[tutorialStep];
                 if (step.expectedMove && direction !== step.expectedMove) {
-                    alert('錯了喔！這步要往「' + (step.expectedMove === 'left' ? '左' : step.expectedMove === 'right' ? '右' : step.expectedMove === 'up' ? '上' : '下') + '」才對，照提示做啦！');
+                    alert(getTranslation('tutorial_wrong_move_alert', { direction: getTranslation(step.expectedMove) }));
                     return;
                 }
             }
@@ -940,7 +1591,7 @@
                         gameActive = false;
                         stopTimer();
                         goHome();
-                        alert('教學完成！現在你可以選擇難度開始自己的遊戲囉！');
+                        alert(getTranslation('tutorial_complete_message'));
                     }
                 } else {
                     addRandomTile();
@@ -949,17 +1600,46 @@
                     if (checkWin()) {
                         gameActive = false;
                         stopTimer();
-                        saveHighScore();
+                        await saveHighScore(); // Save highest score
+                        await saveLeaderboardEntry(score, totalSeconds, true); // Save to leaderboard if 2048 is reached
                         displayWinMessage(); // 顯示勝利訊息
                     } else if (isGameOver()) {
                         gameActive = false;
                         stopTimer();
-                        saveHighScore();
+                        await saveHighScore(); // Save highest score
+                        await saveLeaderboardEntry(score, totalSeconds, false); // Save to leaderboard, indicate 2048 not reached
                         displayGameOverMessage(); // 顯示 Game Over 訊息
                     }
                 }
             }
         }
+
+        async function saveLeaderboardEntry(finalScore, finalTime, reached2048) {
+            if (currentUser) {
+                try {
+                    const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                    const userData = userDoc.exists ? userDoc.data() : {};
+                    const userCountry = userData.country || 'N/A'; // Get country from user data
+
+                    await db.collection('leaderboard').add({
+                        userId: currentUser.uid,
+                        userEmail: currentUser.email || null, // Can be null for phone auth if no email is set
+                        userName: currentUser.displayName || currentUser.email || currentUser.phoneNumber || '匿名玩家', // Use display name, fallback to email/phone
+                        userCountry: userCountry, // Save user's country
+                        score: finalScore,
+                        timeInSeconds: finalTime,
+                        reached2048: reached2048, // New field to indicate if 2048 was reached
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    console.log("Leaderboard entry saved!");
+                } catch (error) {
+                    console.error("Error saving leaderboard entry:", error);
+                }
+            } else {
+                console.log("User not logged in, skipping leaderboard entry save.");
+            }
+        }
+
 
         /**
          * 顯示遊戲結束訊息 (根據嘴砲開關)。
@@ -967,9 +1647,9 @@
         function displayGameOverMessage() {
             let message;
             if (isRoastModeEnabled) {
-                message = `你怎麼那麼菜，連2048都玩不到`;
+                message = getTranslation('game_over_roast');
             } else {
-                message = `遊戲結束`;
+                message = getTranslation('game_over_normal');
             }
             // 遊戲結束或勝利的彈窗應該持續顯示，直到玩家點擊重新開始
             showMessage(message, true);
@@ -982,9 +1662,9 @@
             let message;
             const formattedTime = formatTime(totalSeconds);
             if (isRoastModeEnabled) {
-                message = `也沒多厲害，還不是花了${formattedTime}才${score}分而已`;
+                message = getTranslation('game_win_roast', { time: formattedTime, score: score });
             } else {
-                message = `恭喜到達2048並且花了${formattedTime}得了${score}分`;
+                message = getTranslation('game_win_normal', { time: formattedTime, score: score });
             }
             // 遊戲結束或勝利的彈窗應該持續顯示，直到玩家點擊重新開始
             showMessage(message, true);
@@ -1017,17 +1697,13 @@
 
             initGame(); // 重新初始化遊戲
             resetTimer(); // 重置計時器
-            startTimer(); // 開始計時
+            startTimer();
 
             // 確保遊戲板重新可操作，並且暫停按鈕狀態正確
             gameActive = true;
             isPaused = false;
-            pauseButton.textContent = '暫停';
+            pauseButton.textContent = getTranslation('pause');
             pauseButton.classList.remove('paused');
-
-            // 確保 game-over 彈窗內的按鈕點擊後能重新開始，這個綁定是針對彈窗內的按鈕
-            // 其實因為 `onclick="restartGame()"` 在 HTML 中已經設定，這行可以省略
-            // gameOverDisplay.querySelector('button').onclick = restartGame;
         }
 
         /**
@@ -1038,13 +1714,20 @@
             gameActive = false;
             isPaused = false;
             stopTimer();
-            pauseButton.textContent = '暫停';
+            pauseButton.textContent = getTranslation('pause');
             pauseButton.classList.remove('paused');
 
             hideAllGameElements();
             hideMessage();
             difficultySelection.style.display = 'flex';
             roastModeToggleContainer.style.display = 'flex';
+            authHeaderButton.style.display = 'flex'; // 回到主頁時顯示右上角認證按鈕
+            userDropdown.style.display = 'none'; // 確保下拉菜單隱藏
+            leaderboardButton.style.display = 'block'; // 回到主頁時顯示排行榜按鈕
+            mainSettingsButton.style.display = 'block'; // 回到主頁時顯示設定按鈕
+            userUidDisplay.style.display = 'block'; // 回到主頁時顯示 UID 顯示
+            updateAuthHeaderButton(); // 確保認證按鈕文字正確
+            updatePageLanguage(currentLanguage); // Update language on home page
         }
 
         /**
@@ -1057,6 +1740,9 @@
             homeButton.style.display = 'none';
             pauseButton.style.display = 'none';
             restartButtonAlways.style.display = 'none'; // 確保這個按鈕也隱藏
+            leaderboardModal.style.display = 'none'; // Ensure leaderboard modal is hidden
+            accountSettingsModal.style.display = 'none'; // Ensure account settings modal is hidden
+            mainSettingsModal.style.display = 'none'; // Ensure main settings modal is hidden
         }
 
         /* 事件監聽器 */
@@ -1151,8 +1837,699 @@
             localStorage.setItem('roastMode', isRoastModeEnabled ? 'enabled' : 'disabled');
         });
 
-        // 頁面載入時先初始化最高分顯示
-        document.addEventListener('DOMContentLoaded', loadHighScore);
+        // --- Firebase Authentication 模態框邏輯 ---
+
+        // 顯示模態框
+        authHeaderButton.addEventListener('click', () => {
+            if (currentUser) {
+                // 如果已登入，顯示下拉菜單
+                userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+            } else {
+                // 未登入，顯示認證模態框的主選項
+                authModal.style.display = 'flex';
+                authMainOptions.style.display = 'block';
+                loginFormModal.style.display = 'none';
+                registerFormModal.style.display = 'none';
+                phoneAuthModal.style.display = 'none'; // Ensure phone auth is hidden
+                accountSettingsModal.style.display = 'none'; // Ensure settings is hidden
+            }
+        });
+
+        // 點擊模態框外部關閉
+        window.addEventListener('click', (event) => {
+            if (event.target === authModal || event.target === leaderboardModal || event.target === accountSettingsModal || event.target === mainSettingsModal) {
+                authModal.style.display = 'none';
+                leaderboardModal.style.display = 'none';
+                accountSettingsModal.style.display = 'none';
+                mainSettingsModal.style.display = 'none';
+            }
+            // 點擊頁面其他地方時，如果下拉菜單打開，則關閉
+            if (!authHeaderButton.contains(event.target) && !userDropdown.contains(event.target)) {
+                userDropdown.style.display = 'none';
+            }
+        });
+
+        // 關閉模態框按鈕
+        document.querySelectorAll('.modal .close-button').forEach(button => {
+            button.addEventListener('click', (event) => {
+                event.target.closest('.modal').style.display = 'none';
+            });
+        });
+
+        // 顯示登入表單
+        showLoginFormBtn.addEventListener('click', () => {
+            authMainOptions.style.display = 'none';
+            loginFormModal.style.display = 'block';
+        });
+
+        // 顯示註冊表單
+        showRegisterFormBtn.addEventListener('click', () => {
+            authMainOptions.style.display = 'none';
+            registerFormModal.style.display = 'block';
+        });
+
+        // 顯示電話認證表單
+        phoneAuthButton.addEventListener('click', () => {
+            authMainOptions.style.display = 'none';
+            phoneAuthModal.style.display = 'block';
+            setupRecaptcha(); // Setup reCAPTCHA when phone auth modal is shown
+            // Reset phone auth form state
+            phoneNumberInput.value = '';
+            otpInput.value = '';
+            otpInput.style.display = 'none';
+            verifyOtpButton.style.display = 'none';
+            phoneDisplayNameInput.value = '';
+            phoneDisplayNameInput.style.display = 'none';
+            setPhoneDisplayNameButton.style.display = 'none';
+            sendOtpButton.style.display = 'block';
+        });
+
+        // 返回主選單按鈕
+        backToMainAuthButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                authModal.style.display = 'none'; // Hide auth modal completely
+                leaderboardModal.style.display = 'none'; // Hide leaderboard
+                accountSettingsModal.style.display = 'none'; // Hide account settings
+                mainSettingsModal.style.display = 'none'; // Hide main settings
+
+                // Show the appropriate main section based on current page state
+                if (gameActive) {
+                    // If a game is active, do nothing, just close the modal
+                } else if (isTutorial) {
+                    // If in tutorial mode, nothing specific to show
+                } else {
+                    difficultySelection.style.display = 'flex';
+                    roastModeToggleContainer.style.display = 'flex';
+                }
+
+                // Reset specific forms that were shown
+                loginFormModal.style.display = 'none';
+                registerFormModal.style.display = 'none';
+                phoneAuthModal.style.display = 'none';
+                authMainOptions.style.display = 'block'; // Ensure auth main options are visible next time auth modal is opened
+
+                if (firebaseRecaptchaVerifier) {
+                    firebaseRecaptchaVerifier.clear(); // Clear reCAPTCHA when leaving phone auth
+                }
+            });
+        });
+
+        // 登入功能
+        loginBtnModal.addEventListener('click', async () => {
+            const email = loginEmailInput.value;
+            const password = loginPasswordInput.value;
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                alert(getTranslation('login_success'));
+                authModal.style.display = 'none'; // 登入成功後關閉模態框
+            } catch (error) {
+                alert(getTranslation('login_failed') + error.message);
+                console.error("登入失敗:", error);
+            }
+        });
+
+        // 註冊功能 (包含信箱驗證和暱稱設定)
+        registerBtnModal.addEventListener('click', async () => {
+            const email = registerEmailInput.value;
+            const password = registerPasswordInput.value;
+            const confirmPassword = registerConfirmPasswordInput.value;
+
+            if (password !== confirmPassword) {
+                alert(getTranslation('password_mismatch'));
+                return;
+            }
+            if (password.length < 6) {
+                alert(getTranslation('password_too_short'));
+                return;
+            }
+
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // Prompt for nickname
+                let displayName = prompt(getTranslation('register_success_prompt_nickname'));
+                if (displayName) {
+                    await user.updateProfile({ displayName: displayName });
+                }
+                // Set default country for new users
+                await db.collection('users').doc(user.uid).set({
+                    country: "Taiwan",
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+
+                await user.sendEmailVerification();
+                alert(getTranslation('register_success_verify_email'));
+                authModal.style.display = 'none'; // 註冊成功後關閉模態框
+            } catch (error) {
+                alert(getTranslation('register_failed') + error.message);
+                console.error("註冊失敗:", error);
+            }
+        });
+
+        // Google 登入功能 (模態框內)
+        googleSigninBtnModal.addEventListener('click', async () => {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            try {
+                await auth.signInWithPopup(provider);
+                // For Google login, if it's a new user, also set default country
+                if (currentUser && currentUser.metadata.creationTime === currentUser.metadata.lastSignInTime) {
+                    await db.collection('users').doc(currentUser.uid).set({
+                        country: "Taiwan",
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+                }
+                alert(getTranslation('google_login_success'));
+                authModal.style.display = 'none'; // 登入成功後關閉模態框
+            } catch (error) {
+                alert(getTranslation('google_login_failed') + error.message);
+                console.error("Google 登入失敗:", error);
+            }
+        });
+
+        // 電話認證相關功能
+        function setupRecaptcha() {
+            if (!firebaseRecaptchaVerifier) { // Only create if it doesn't exist
+                firebaseRecaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                    'size': 'invisible', // Use invisible reCAPTCHA
+                    'callback': (response) => {
+                        // reCAPTCHA solved, allow signInWithPhoneNumber.
+                        // You can optionally call sendOtpButton.click() here automatically
+                    },
+                    'expired-callback': () => {
+                        alert(getTranslation('recaptcha_expired'));
+                        // Optionally refresh reCAPTCHA
+                        firebaseRecaptchaVerifier.render().then(function(widgetId) {
+                            grecaptcha.reset(widgetId);
+                        });
+                    }
+                });
+                firebaseRecaptchaVerifier.render().then(function(widgetId) {
+                    // reCAPTCHA is rendered.
+                });
+            }
+        }
+
+        sendOtpButton.addEventListener('click', async () => {
+            const phoneNumber = phoneNumberInput.value;
+            if (!phoneNumber) {
+                alert(getTranslation('enter_phone_number'));
+                return;
+            }
+            if (!phoneNumber.startsWith('+')) {
+                alert(getTranslation('phone_number_format_error'));
+                return;
+            }
+
+            try {
+                // Ensure reCAPTCHA is rendered and verified
+                await firebaseRecaptchaVerifier.verify();
+                confirmationResult = await auth.signInWithPhoneNumber(phoneNumber, firebaseRecaptchaVerifier);
+                alert(getTranslation('otp_sent'));
+                sendOtpButton.style.display = 'none';
+                phoneNumberInput.style.display = 'none'; // Hide phone number input
+                otpInput.style.display = 'block';
+                verifyOtpButton.style.display = 'block';
+            } catch (error) {
+                alert(getTranslation('otp_send_failed') + error.message);
+                console.error("發送驗證碼失敗:", error);
+                // Clear reCAPTCHA in case of error to allow retry
+                if (firebaseRecaptchaVerifier) {
+                    firebaseRecaptchaVerifier.render().then(function(widgetId) {
+                        grecaptcha.reset(widgetId);
+                    });
+                }
+            }
+        });
+
+        verifyOtpButton.addEventListener('click', async () => {
+            const code = otpInput.value;
+            if (!code) {
+                alert(getTranslation('enter_otp'));
+                return;
+            }
+            try {
+                const userCredential = await confirmationResult.confirm(code);
+                const user = userCredential.user;
+
+                // Check if user is new or existing
+                if (user.metadata.creationTime === user.metadata.lastSignInTime) {
+                    // New user, prompt for display name and set default country
+                    alert(getTranslation('phone_auth_success_prompt_nickname'));
+                    otpInput.style.display = 'none';
+                    verifyOtpButton.style.display = 'none';
+                    phoneDisplayNameInput.style.display = 'block';
+                    setPhoneDisplayNameButton.style.display = 'block';
+                    phoneDisplayNameInput.focus();
+                    await db.collection('users').doc(user.uid).set({
+                        country: "Taiwan", // Set default country for new phone auth users
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+                } else {
+                    // Existing user
+                    alert(getTranslation('phone_login_success'));
+                    authModal.style.display = 'none';
+                }
+            } catch (error) {
+                alert(getTranslation('otp_verify_failed') + error.message);
+                console.error("驗證失敗:", error);
+            }
+        });
+
+        setPhoneDisplayNameButton.addEventListener('click', async () => {
+            const displayName = phoneDisplayNameInput.value;
+            if (!displayName) {
+                alert(getTranslation('nickname_cannot_be_empty'));
+                return;
+            }
+            try {
+                await auth.currentUser.updateProfile({ displayName: displayName });
+                alert(getTranslation('nickname_set_success'));
+                authModal.style.display = 'none';
+            } catch (error) {
+                alert(getTranslation('nickname_set_failed') + error.message);
+                console.error("設定暱稱失敗:", error);
+            }
+        });
+
+        // 帳戶設定功能
+        accountSettingsBtnDropdown.addEventListener('click', async () => {
+            if (currentUser) {
+                userDropdown.style.display = 'none'; // Hide user dropdown
+                authModal.style.display = 'flex'; // Show main auth modal as a container
+                authMainOptions.style.display = 'none'; // Hide main auth options
+                loginFormModal.style.display = 'none';
+                registerFormModal.style.display = 'none';
+                phoneAuthModal.style.display = 'none';
+
+                accountSettingsModal.style.display = 'block'; // Show account settings modal
+
+                // Load current settings
+                settingsDisplayNameInput.value = currentUser.displayName || '';
+                try {
+                    const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                    if (userDoc.exists && userDoc.data().country) {
+                        settingsCountrySelect.value = userDoc.data().country;
+                    } else {
+                        settingsCountrySelect.value = 'Taiwan'; // Default if not set
+                    }
+                } catch (error) {
+                    console.error("Error loading user country:", error);
+                    settingsCountrySelect.value = 'Taiwan'; // Fallback
+                }
+            } else {
+                alert(getTranslation('please_login_first_settings'));
+            }
+        });
+
+        saveAccountSettingsButton.addEventListener('click', async () => {
+            if (!currentUser) return;
+
+            const newDisplayName = settingsDisplayNameInput.value;
+            const newCountry = settingsCountrySelect.value;
+            let changesMade = false;
+
+            try {
+                // Update display name
+                if (newDisplayName !== currentUser.displayName) {
+                    await currentUser.updateProfile({ displayName: newDisplayName });
+                    changesMade = true;
+                }
+
+                // Update country in Firestore
+                const userDoc = await db.collection('users').doc(currentUser.uid).get();
+                const currentCountry = userDoc.exists ? userDoc.data().country : null;
+
+                if (newCountry !== currentCountry) {
+                    await db.collection('users').doc(currentUser.uid).set({
+                        country: newCountry,
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                    }, { merge: true });
+                    changesMade = true;
+                }
+
+                if (changesMade) {
+                    alert(getTranslation('settings_saved_success'));
+                } else {
+                    alert(getTranslation('no_settings_changed'));
+                }
+                accountSettingsModal.style.display = 'none';
+                authModal.style.display = 'none'; // Close the auth container modal
+            } catch (error) {
+                alert(getTranslation('settings_save_failed') + error.message);
+                console.error("儲存帳戶設定失敗:", error);
+            }
+        });
+
+
+        // 登出功能 (下拉菜單內)
+        logoutBtnDropdown.addEventListener('click', async () => {
+            try {
+                await auth.signOut();
+                alert(getTranslation('logout_success'));
+                userDropdown.style.display = 'none'; // 關閉下拉菜單
+                goHome(); // 登出後回到主頁
+                if (firebaseRecaptchaVerifier) {
+                    firebaseRecaptchaVerifier.clear(); // Clear reCAPTCHA on logout
+                }
+            } catch (error) {
+                alert(getTranslation('logout_failed') + error.message);
+                console.error("登出失敗:", error);
+            }
+        });
+
+        // 主頁設定按鈕邏輯
+        mainSettingsButton.addEventListener('click', () => {
+            mainSettingsModal.style.display = 'flex';
+            // Set current language in select box
+            languageSelect.value = currentLanguage;
+        });
+
+        languageSelect.addEventListener('change', (event) => {
+            const newLanguage = event.target.value;
+            localStorage.setItem('gameLanguage', newLanguage);
+            currentLanguage = newLanguage;
+            updatePageLanguage(newLanguage);
+            alert(getTranslation('language_changed_alert'));
+        });
+
+        // 語言包
+        const translations = {
+            'zh-Hant': {
+                'title': '2048 遊戲',
+                'login_register': '登入 / 註冊',
+                'welcome_user': '歡迎，{user}！',
+                'account_settings': '帳戶設定',
+                'logout': '登出',
+                'score': '分數',
+                'high_score': '最高分',
+                'time': '時間',
+                'restart': '重新開始',
+                'game_over_normal': '遊戲結束',
+                'game_over_roast': '你怎麼那麼菜，連2048都玩不到',
+                'game_win_normal': '恭喜到達2048並且花了{time}得了{score}分',
+                'game_win_roast': '也沒多厲害，還不是花了{time}才{score}分而已',
+                'board_size_selection': '選擇板面尺寸',
+                'standard_4x4': '4 x 4 (標準)',
+                'tutorial_mode': '教學模式',
+                'leaderboard': '排行榜',
+                'home': '回到主頁',
+                'pause': '暫停',
+                'continue': '繼續',
+                'game_paused': '遊戲已暫停',
+                'roast_mode': '嘴砲模式',
+                'feedback': '意見反饋',
+                'feedback_web_gmail': '用網頁版 Gmail',
+                'feedback_app_email': '用郵件應用程式',
+                'account_operations': '帳戶操作',
+                'login': '登入',
+                'register': '註冊',
+                'phone_login_register': '電話登入 / 註冊',
+                'login_with_google': '使用 Google 登入',
+                'email': '電子郵件',
+                'password': '密碼',
+                'confirm_password': '再次確認密碼',
+                'phone_number': '輸入電話號碼 (+國碼)',
+                'send_otp': '發送驗證碼',
+                'enter_otp': '輸入驗證碼',
+                'verify': '驗證',
+                'enter_nickname': '輸入你的暱稱',
+                'set_nickname': '設定暱稱',
+                'back': '返回',
+                'ranking': '排名',
+                'user': '使用者',
+                'country': '國家',
+                'sort_by_score': '依分數排名',
+                'sort_by_time': '依時間排名',
+                'no_leaderboard_data': '目前沒有排行榜資料。',
+                'your_uid': '您的 UID: {uid}',
+                'nickname': '暱稱',
+                'new_nickname': '輸入新暱稱',
+                'save_settings': '儲存設定',
+                'settings': '設定',
+                'language': '語言',
+                'traditional_chinese': '繁體中文',
+                'english': 'English',
+                'login_success': '登入成功！',
+                'login_failed': '登入失敗: ',
+                'password_mismatch': '密碼和確認密碼不符！',
+                'password_too_short': '密碼至少需要6個字元！',
+                'register_success_prompt_nickname': '註冊成功！請輸入您的暱稱 (選填):',
+                'register_success_verify_email': '註冊成功！請檢查您的電子郵件以進行驗證。',
+                'register_failed': '註冊失敗: ',
+                'google_login_success': 'Google 登入成功！',
+                'google_login_failed': 'Google 登入失敗: ',
+                'recaptcha_expired': 'reCAPTCHA 已過期，請重試。',
+                'enter_phone_number': '請輸入電話號碼！',
+                'phone_number_format_error': '電話號碼必須包含國際區碼，例如 +886912345678',
+                'otp_sent': '驗證碼已發送！',
+                'otp_send_failed': '發送驗證碼失敗: ',
+                'otp_verify_failed': '驗證失敗: ',
+                'phone_auth_success_prompt_nickname': '電話號碼驗證成功！請設定您的暱稱。',
+                'phone_login_success': '電話登入成功！',
+                'nickname_cannot_be_empty': '暱稱不能為空！',
+                'nickname_set_success': '暱稱設定成功！',
+                'nickname_set_failed': '設定暱稱失敗: ',
+                'please_login_first_settings': '請先登入才能進行帳戶設定！',
+                'settings_saved_success': '帳戶設定已儲存！',
+                'no_settings_changed': '沒有設定被更改。',
+                'settings_save_failed': '儲存帳戶設定失敗: ',
+                'logout_success': '登出成功！',
+                'logout_failed': '登出失敗: ',
+                'tutorial_complete_message': '教學完成！現在你可以選擇難度開始自己的遊戲囉！',
+                'tutorial_wrong_move_alert': '錯了喔！這步要往「{direction}」才對，照提示做啦！',
+                'left': '左', 'right': '右', 'up': '上', 'down': '下',
+                'language_changed_alert': '語言已更改！'
+            },
+            'en': {
+                'title': '2048 Game',
+                'login_register': 'Login / Register',
+                'welcome_user': 'Welcome, {user}!',
+                'account_settings': 'Account Settings',
+                'logout': 'Logout',
+                'score': 'Score',
+                'high_score': 'High Score',
+                'time': 'Time',
+                'restart': 'Restart',
+                'game_over_normal': 'Game Over',
+                'game_over_roast': 'You are so bad, can\'t even reach 2048',
+                'game_win_normal': 'Congratulations! You reached 2048 in {time} with {score} points.',
+                'game_win_roast': 'Not that impressive, only {score} points in {time}.',
+                'board_size_selection': 'Select Board Size',
+                'standard_4x4': '4 x 4 (Standard)',
+                'tutorial_mode': 'Tutorial Mode',
+                'leaderboard': 'Leaderboard',
+                'home': 'Home',
+                'pause': 'Pause',
+                'continue': 'Continue',
+                'game_paused': 'Game Paused',
+                'roast_mode': 'Roast Mode',
+                'feedback': 'Feedback',
+                'feedback_web_gmail': 'Use Web Gmail',
+                'feedback_app_email': 'Use Email App',
+                'account_operations': 'Account Operations',
+                'login': 'Login',
+                'register': 'Register',
+                'phone_login_register': 'Phone Login / Register',
+                'login_with_google': 'Login with Google',
+                'email': 'Email',
+                'password': 'Password',
+                'confirm_password': 'Confirm Password',
+                'phone_number': 'Enter Phone Number (+Country Code)',
+                'send_otp': 'Send OTP',
+                'enter_otp': 'Enter OTP',
+                'verify': 'Verify',
+                'enter_nickname': 'Enter your nickname',
+                'set_nickname': 'Set Nickname',
+                'back': 'Back',
+                'ranking': 'Rank',
+                'user': 'User',
+                'country': 'Country',
+                'sort_by_score': 'Sort by Score',
+                'sort_by_time': 'Sort by Time',
+                'no_leaderboard_data': 'No leaderboard data available.',
+                'your_uid': 'Your UID: {uid}',
+                'nickname': 'Nickname',
+                'new_nickname': 'Enter new nickname',
+                'save_settings': 'Save Settings',
+                'settings': 'Settings',
+                'language': 'Language',
+                'traditional_chinese': 'Traditional Chinese',
+                'english': 'English',
+                'login_success': 'Login successful!',
+                'login_failed': 'Login failed: ',
+                'password_mismatch': 'Password and confirm password do not match!',
+                'password_too_short': 'Password must be at least 6 characters long!',
+                'register_success_prompt_nickname': 'Registration successful! Please enter your nickname (optional):',
+                'register_success_verify_email': 'Registration successful! Please check your email for verification.',
+                'register_failed': 'Registration failed: ',
+                'google_login_success': 'Google login successful!',
+                'google_login_failed': 'Google login failed: ',
+                'recaptcha_expired': 'reCAPTCHA expired, please try again.',
+                'enter_phone_number': 'Please enter phone number!',
+                'phone_number_format_error': 'Phone number must include country code, e.g., +1234567890',
+                'otp_sent': 'OTP sent!',
+                'otp_send_failed': 'Failed to send OTP: ',
+                'otp_verify_failed': 'Verification failed: ',
+                'phone_auth_success_prompt_nickname': 'Phone number verification successful! Please set your nickname.',
+                'phone_login_success': 'Phone login successful!',
+                'nickname_cannot_be_empty': 'Nickname cannot be empty!',
+                'nickname_set_success': 'Nickname set successfully!',
+                'nickname_set_failed': 'Failed to set nickname: ',
+                'please_login_first_settings': 'Please log in first to access account settings!',
+                'settings_saved_success': 'Account settings saved successfully!',
+                'no_settings_changed': 'No settings were changed.',
+                'settings_save_failed': 'Failed to save account settings: ',
+                'logout_success': 'Logout successful!',
+                'logout_failed': 'Logout failed: ',
+                'tutorial_complete_message': 'Tutorial complete! You can now choose a difficulty and start your own game!',
+                'tutorial_wrong_move_alert': 'Wrong move! You need to move "{direction}" as per the hint!',
+                'left': 'left', 'right': 'right', 'up': 'up', 'down': 'down',
+                'language_changed_alert': 'Language changed!'
+            }
+        };
+
+        function getTranslation(key, params = {}) {
+            let text = translations[currentLanguage][key] || translations['zh-Hant'][key] || key; // Fallback to Traditional Chinese then key itself
+            for (const param in params) {
+                text = text.replace(`{${param}}`, params[param]);
+            }
+            return text;
+        }
+
+        function updatePageLanguage(lang) {
+            document.title = getTranslation('title');
+            document.querySelector('h1').textContent = getTranslation('title');
+            document.getElementById('auth-display-name').textContent = getTranslation('login_register');
+            document.getElementById('score-board').firstChild.textContent = getTranslation('score') + ': ';
+            document.getElementById('high-score-board').firstChild.textContent = getTranslation('high_score') + ': ';
+            document.getElementById('timer-display-container').firstChild.textContent = getTranslation('time') + ': ';
+            document.getElementById('restart-button-always').textContent = getTranslation('restart');
+            document.querySelector('#difficulty-selection h2').textContent = getTranslation('board_size_selection');
+            document.querySelector('#difficulty-selection button:nth-child(2)').textContent = getTranslation('standard_4x4');
+            document.querySelector('#difficulty-selection button:nth-child(3)').textContent = '5 x 5';
+            document.querySelector('#difficulty-selection button:nth-child(4)').textContent = '6 x 6';
+            document.querySelector('#difficulty-selection button:nth-child(5)').textContent = '7 x 7';
+            document.querySelector('#difficulty-selection button:nth-child(6)').textContent = getTranslation('tutorial_mode');
+            document.getElementById('leaderboard-button').textContent = getTranslation('leaderboard');
+            document.getElementById('home-button').textContent = getTranslation('home');
+            document.getElementById('pause-button').textContent = getTranslation(isPaused ? 'continue' : 'pause');
+            document.getElementById('roast-mode-toggle-container label').textContent = getTranslation('roast_mode');
+            document.getElementById('main-feedback-button').textContent = getTranslation('feedback');
+            document.getElementById('feedback-web').textContent = getTranslation('feedback_web_gmail');
+            document.getElementById('feedback-app').textContent = getTranslation('feedback_app_email');
+
+            // Auth Modal
+            document.querySelector('#auth-main-options h2').textContent = getTranslation('account_operations');
+            document.getElementById('show-login-form').textContent = getTranslation('login');
+            document.getElementById('show-register-form').textContent = getTranslation('register');
+            document.getElementById('phone-auth-button').textContent = getTranslation('phone_login_register');
+            document.getElementById('google-signin-btn-modal').textContent = getTranslation('login_with_google');
+
+            document.querySelector('#login-form-modal h2').textContent = getTranslation('login');
+            loginEmailInput.placeholder = getTranslation('email');
+            loginPasswordInput.placeholder = getTranslation('password');
+            document.getElementById('login-btn-modal').textContent = getTranslation('login');
+
+            document.querySelector('#register-form-modal h2').textContent = getTranslation('register');
+            registerEmailInput.placeholder = getTranslation('email');
+            registerPasswordInput.placeholder = getTranslation('password');
+            registerConfirmPasswordInput.placeholder = getTranslation('confirm_password');
+            document.getElementById('register-btn-modal').textContent = getTranslation('register');
+
+            document.querySelector('#phone-auth-modal h2').textContent = getTranslation('phone_login_register');
+            phoneNumberInput.placeholder = getTranslation('phone_number');
+            sendOtpButton.textContent = getTranslation('send_otp');
+            otpInput.placeholder = getTranslation('enter_otp');
+            verifyOtpButton.textContent = getTranslation('verify');
+            phoneDisplayNameInput.placeholder = getTranslation('enter_nickname');
+            setPhoneDisplayNameButton.textContent = getTranslation('set_nickname');
+
+            document.querySelectorAll('.back-to-main-auth').forEach(btn => btn.textContent = getTranslation('back'));
+
+            // User dropdown
+            document.getElementById('account-settings-btn-dropdown').textContent = getTranslation('account_settings');
+            document.getElementById('logout-btn-dropdown').textContent = getTranslation('logout');
+
+            // Leaderboard Modal
+            document.querySelector('#leaderboard-modal h2').textContent = getTranslation('leaderboard');
+            sortbyScoreButton.textContent = getTranslation('sort_by_score');
+            sortByTimeButton.textContent = getTranslation('sort_by_time');
+            document.querySelector('#leaderboard-modal th:nth-child(1)').textContent = getTranslation('ranking');
+            document.querySelector('#leaderboard-modal th:nth-child(2)').textContent = getTranslation('user');
+            document.querySelector('#leaderboard-modal th:nth-child(3)').textContent = getTranslation('country');
+            document.querySelector('#leaderboard-modal th:nth-child(4)').textContent = getTranslation('score');
+            document.querySelector('#leaderboard-modal th:nth-child(5)').textContent = getTranslation('time');
+
+            // Account Settings Modal
+            document.querySelector('#account-settings-modal h2').textContent = getTranslation('account_settings');
+            document.querySelector('label[for="settings-display-name"]').textContent = getTranslation('nickname') + ':';
+            settingsDisplayNameInput.placeholder = getTranslation('new_nickname');
+            document.querySelector('label[for="settings-country"]').textContent = getTranslation('country') + ':';
+            saveAccountSettingsButton.textContent = getTranslation('save_settings');
+
+            // Main Settings Modal
+            document.getElementById('main-settings-button').textContent = getTranslation('settings');
+            document.querySelector('#main-settings-modal h2').textContent = getTranslation('settings');
+            document.querySelector('label[for="language-select"]').textContent = getTranslation('language') + ':';
+            document.querySelector('#language-select option[value="zh-Hant"]').textContent = getTranslation('traditional_chinese');
+            document.querySelector('#language-select option[value="en"]').textContent = getTranslation('english');
+
+            // Update user UID display
+            if (currentUser) {
+                userUidDisplay.textContent = getTranslation('your_uid', { uid: currentUser.uid });
+            }
+        }
+
+
+        // 更新右上角認證按鈕的顯示
+        function updateAuthHeaderButton() {
+            if (currentUser) {
+                authDisplayName.textContent = currentUser.displayName || currentUser.email || currentUser.phoneNumber || getTranslation('login_register');
+                userEmailDropdown.textContent = currentUser.displayName || currentUser.email || currentUser.phoneNumber || 'N/A';
+                authHeaderButton.classList.add('user-logged-in');
+                userUidDisplay.textContent = getTranslation('your_uid', { uid: currentUser.uid });
+                userUidDisplay.style.display = 'block';
+            } else {
+                authDisplayName.textContent = getTranslation('login_register');
+                authHeaderButton.classList.remove('user-logged-in');
+                userDropdown.style.display = 'none'; // 確保登出時下拉菜單是關閉的
+                userUidDisplay.textContent = '';
+                userUidDisplay.style.display = 'none';
+            }
+        }
+
+        // 監聽認證狀態變化
+        auth.onAuthStateChanged(user => {
+            currentUser = user; // 更新全域的 currentUser
+            updateAuthHeaderButton(); // 更新右上角按鈕狀態
+
+            // 不再直接顯示 auth-container，而是根據currentUser狀態決定是否載入最高分
+            if (user) {
+                loadHighScore(); // 用戶登入後重新載入其Firestore最高分
+            } else {
+                loadHighScore(); // 用戶登出後載入localStorage最高分
+            }
+            // Ensure reCAPTCHA is set up if not logged in and on home page
+            if (!user && difficultySelection.style.display === 'flex') {
+                setupRecaptcha();
+            }
+        });
+
+        // 頁面載入時先初始化嘴砲開關和認證按鈕顯示
+        document.addEventListener('DOMContentLoaded', () => {
+            roastModeCheckbox.checked = isRoastModeEnabled;
+            // Load language from localStorage or default
+            currentLanguage = localStorage.getItem('gameLanguage') || 'zh-Hant';
+            updatePageLanguage(currentLanguage);
+            languageSelect.value = currentLanguage; // Set the select box to current language
+
+            // onAuthStateChanged 會在 Firebase 初始化後自動觸發，所以這裡不需要再次呼叫 updateAuthHeaderButton() 或 loadHighScore()
+            // Make sure the leaderboard and main settings button is visible on home page load
+            leaderboardButton.style.display = 'block';
+            mainSettingsButton.style.display = 'block';
+        });
 
     </script>
 </body>
